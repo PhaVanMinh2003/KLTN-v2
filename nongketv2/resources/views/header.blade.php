@@ -56,10 +56,13 @@
                                     </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" href=""><i class="fas fa-sign-in-alt"></i> Đăng Nhập</a>
+                                    <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.login.form') }}">
+                                        <i class="fas fa-user-plus"></i> Đăng Nhập</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" href=""><i class="fas fa-user-plus"></i> Đăng Ký</a>
+                                    <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.register.form') }}">
+                                        <i class="fas fa-user-plus"></i> Đăng Ký
+                                    </a>
                                 </li>
                             </ul>
                         </div>

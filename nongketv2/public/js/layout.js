@@ -2,7 +2,7 @@ $(document).on('click', '.load-content', function(e) {
     e.preventDefault();
     const url = $(this).data('url');
 
-    $('#content').fadeOut(500, function() { // Ẩn phần nội dung
+    $('#content').fadeOut(300, function() {
         $.ajax({
             url: url,
             method: 'GET',

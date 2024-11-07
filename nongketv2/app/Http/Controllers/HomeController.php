@@ -54,17 +54,20 @@ class HomeController extends Controller
         return view('maincontent.showProductDetail', compact('product'));
     }
     public function search(Request $request)
-    {
-        $keyword = $request->input('query');
+{
+    $keyword = $request->input('query');
 
-        if ($request->ajax()) {
-            $products = $this->productService->autocomplete($keyword);
-            return response()->json($products);
-        }
+    // Giả sử bạn có một service để lấy sản phẩm
+    $products = $this->productService->search($keyword);
 
-        $products = $this->productService->search($keyword);
-        return view('search_results', ['products' => $products, 'keyword' => $keyword]);
+    // Nếu là AJAX request, trả về view tổng quát
+    if ($request->ajax()) {
+        return view('maincontent.search_results', ['products' => $products, 'keyword' => $keyword]);
     }
+
+    // Ngược lại, trả về view tổng quát
+    return view('maincontent.search_results', ['products' => $products, 'keyword' => $keyword]);
+}
 
     public function autocomplete(Request $request)
     {

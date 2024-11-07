@@ -1,6 +1,10 @@
 <?php
 
 namespace Modules\User\Providers;
+use Modules\User\Repositories\IUserRepository;
+use Modules\User\Repositories\UserRepository;
+use Modules\User\Services\IAuthService;
+use Modules\User\Services\AuthService;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
@@ -38,6 +42,8 @@ class UserServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->bind(IUserRepository::class, UserRepository::class);
+        $this->app->bind(IAuthService::class, AuthService::class);
     }
 
     /**

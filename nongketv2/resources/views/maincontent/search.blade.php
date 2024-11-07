@@ -7,6 +7,7 @@
     <div id="suggestions" class="bg-light" style="display: none;"></div>
 </div>
 
+
 <style>
 /* Container cho thanh tìm kiếm */
 #search-container {

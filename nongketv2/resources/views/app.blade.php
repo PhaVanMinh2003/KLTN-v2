@@ -22,6 +22,12 @@
 </head>
 <body>
     <div id="app">
+            @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
         @include('header')
         <div class="row">
             <div class="col-lg-2 col-md-3 d-none d-md-block sidebar">
