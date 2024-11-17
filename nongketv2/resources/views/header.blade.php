@@ -17,12 +17,12 @@
 
                         <!-- Avatar hoặc Icon -->
                         <div class="ms-3">
-                            @if(Auth::check())
-                                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle" style="height: 40px; width: 40px; border: 2px solid white;">
+                            @auth
+                                <img src="{{ url('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle" style="height: 40px; width: 40px; border: 2px solid white;">
                                 <span class="ms-2 text-white">{{ Auth::user()->name }}</span>
                             @else
-                                <i class="fas fa-user-circle" style="font-size: 40px; color: white;"></i> <!-- Icon khi chưa đăng nhập -->
-                            @endif
+                                <i class="fas fa-user-circle" style="font-size: 40px; color: white;"></i>
+                            @endauth
                         </div>
                     </div>
                 </div>
@@ -46,20 +46,21 @@
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white" href=""><i class="fas fa-shopping-cart"></i> Giỏ Hàng</a>
+                                    <a class="nav-link text-white load-content" href="#" id="cart-link" data-url="{{ route('cart.index') }}">
+                                        <i class="fas fa-shopping-cart"></i> Giỏ Hàng
+                                    </a>
                                 </li>
-                                <li class="nav-item dropdown">
+                                <li class="nav-item dropdown" id="account-menu" style="display: none;">
                                     <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tài Khoản</a>
                                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="">Thông Tin Cá Nhân</a></li>
-                                        <li><a class="dropdown-item" href="">Đăng Xuất</a></li>
+                                        <li><a class="dropdown-item" href="#">Thông Tin Cá Nhân</a></li>
+                                        <li><a class="dropdown-item" href="#" id="logout-btn">Đăng Xuất</a></li>
                                     </ul>
                                 </li>
-                                <li class="nav-item">
+                                <li class="nav-item" id="login-register-links">
                                     <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.login.form') }}">
-                                        <i class="fas fa-user-plus"></i> Đăng Nhập</a>
-                                </li>
-                                <li class="nav-item">
+                                        <i class="fas fa-user-plus"></i> Đăng Nhập
+                                    </a>
                                     <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.register.form') }}">
                                         <i class="fas fa-user-plus"></i> Đăng Ký
                                     </a>
@@ -72,4 +73,80 @@
         </div>
     </div>
 </header>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Kiểm tra trạng thái đăng nhập qua Laravel Auth
+    @auth
+        document.getElementById('account-menu').style.display = 'block';
+        document.getElementById('login-register-links').style.display = 'none';
+    @else
+        document.getElementById('account-menu').style.display = 'none';
+        document.getElementById('login-register-links').style.display = 'block';
+    @endauth
 
+    // Xử lý sự kiện đăng xuất
+    const logoutButton = document.getElementById('logout-btn');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            // Gửi yêu cầu đăng xuất qua Laravel
+            axios.post('/logout', {
+                headers: {
+                    'Authorization': 'Bearer ' + localStorage.getItem('auth_token')
+                }
+            })
+            .then(function (response) {
+                if (response.data.success) {
+                    window.location.href = '/'; // Hoặc trang bạn muốn chuyển hướng
+                }
+            })
+            .catch(function (error) {
+                console.error('Error logging out:', error);
+            });
+        });
+    }
+
+    // Xử lý sự kiện giỏ hàng
+    const cartLink = document.getElementById('cart-link');
+    if (cartLink) {
+        cartLink.addEventListener('click', function (e) {
+            e.preventDefault();  // Ngừng hành động mặc định của thẻ <a> (chuyển hướng)
+            e.stopImmediatePropagation();  // Ngừng tất cả các sự kiện khác tiếp theo
+
+            // Kiểm tra xem người dùng đã đăng nhập chưa
+            @auth
+                // Nếu đã đăng nhập, tải nội dung giỏ hàng vào phần layout
+                const url = cartLink.getAttribute('data-url');
+                // Giả sử bạn có một hàm loadContent để tải dữ liệu vào layout
+                loadContent(url);
+            @else
+                alert('Bạn phải đăng nhập để xem giỏ hàng.');
+            @endauth
+        });
+    }
+});
+
+// Hàm load nội dung vào layout (cần phải tùy chỉnh lại theo cách bạn load dữ liệu)
+function loadContent(url) {
+    axios.get(url)
+        .then(response => {
+            // Giả sử bạn có phần tử có ID #main-content để hiển thị nội dung
+            document.getElementById('content').innerHTML = response.data;
+        })
+        .catch(error => {
+            console.error('Error loading content:', error);
+        });
+}
+
+</script>
+<style>#login-register-links {
+    display: flex;
+    align-items: center; /* Căn chỉnh theo chiều dọc */
+    gap: 15px; /* Khoảng cách giữa các nút */
+}
+
+#login-register-links a {
+    display: inline-block; /* Đảm bảo các nút không bị đẩy xuống dòng */
+}
+</style>

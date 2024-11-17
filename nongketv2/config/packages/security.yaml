@@ -1,0 +1,22 @@
+# config/packages/security.yaml
+security:
+    firewalls:
+        public_area:
+            pattern: ^/public/
+            security: false
+        main:
+            form_login:
+                login_path: login
+                check_path: login
+            logout:
+                path: logout
+            csrf_protection: true
+            access_control:
+                - { path: ^/admin, roles: ROLE_ADMIN }
+                - { path: ^/profile, roles: ROLE_USER }
+                - { path: ^/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+
+    encoders:
+        App\Entity\User:
+            algorithm: bcrypt
+            cost: 12

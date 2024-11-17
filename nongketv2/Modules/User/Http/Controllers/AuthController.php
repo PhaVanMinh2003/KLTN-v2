@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\User\Services\IAuthService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 class AuthController extends Controller
 {
     protected $authService;
@@ -14,71 +16,104 @@ class AuthController extends Controller
     {
         $this->authService = $authService;
     }
-
     public function showRegistrationForm()
     {
         return view('user::register');
     }
-
     public function register(Request $request)
     {
+        // Validate input dữ liệu
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8|confirmed', // Xác nhận mật khẩu
         ]);
-        $user = $this->authService->register($validatedData);
 
-        // Thực hiện hành động sau khi đăng ký thành công (như chuyển hướng, gửi email, v.v.)
-        return redirect()->route('home')->with('success', 'Đăng ký thành công!');
+        // Gọi service để lưu người dùng, đã mã hóa mật khẩu trong service rồi
+        $this->authService->register($validatedData);
+
+        // Redirect về trang đăng nhập với thông báo thành công
+        return redirect()->route('user.login.form')->with('success', 'Đăng ký thành công!');
     }
+
     public function showLoginForm()
     {
         return view('user::login');
     }
-
     public function login(Request $request)
     {
-        // Kiểm tra xem có lỗi trong quá trình xác thực không
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
+        try {
+            \Log::info('Login request received', $request->all());
 
-        $credentials = $request->only('email', 'password');
+            $validator = \Validator::make($request->all(), [
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
 
-        // Xác thực người dùng
-        if (Auth::attempt($credentials)) {
-            // Đăng nhập thành công, chuyển hướng đến trang đã định
-            return redirect()->intended('home')->with('success', 'Đăng nhập thành công!');
+            if ($validator->fails()) {
+                \Log::error('Validation failed', ['errors' => $validator->errors()]);
+                return response()->json([
+                    'success' => false,
+                    'errors' => $validator->errors()->all(),
+                ]);
+            }
+
+            $credentials = $request->only('email', 'password');
+            $credentials['email'] = strtolower($credentials['email']);
+
+            if (Auth::attempt($credentials)) {
+                $user = Auth::user();
+                \Log::info('User authenticated successfully', ['user_id' => $user->id]);
+
+                // Tạo token
+                $token = $user->createToken('YourAppName')->plainTextToken;
+
+                return response()->json([
+                    'success' => true,
+                    'token' => $token, // Trả về token cho người dùng
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['Invalid email or password.']
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Login error', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'errors' => ['An error occurred. Please try again later.']
+            ], 500);
         }
-
-        // Đăng nhập không thành công, trả về thông báo lỗi
-        return back()->withErrors([
-            'email' => 'Thông tin đăng nhập không đúng.',
-        ])->withInput(); // Giữ lại thông tin nhập vào
     }
 
     public function logout()
     {
-        Auth::logout();
-        return redirect('/login')->with('success', 'Đăng xuất thành công!');
+        try {
+            $this->authService->logout();
+            return response()->json(['success' => true, 'message' => 'Logout successful']);
+        } catch (\Exception $e) {
+            Log::error('Logout error', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'errors' => ['Có lỗi xảy ra trong quá trình đăng xuất. Vui lòng thử lại sau.']
+            ], 500);
+        }
     }
-
-
-
-    public function showForgotPasswordForm() {
-        return view('user::forgot-password'); // Đường dẫn tới view forgot-password
+    public function showForgotPasswordForm()
+    {
+        return view('user::forgot-password');
     }
     public function submitForgotPassword(Request $request)
-{
-    $request->validate([
-        'email' => 'required|email|exists:users,email',
-    ]);
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ]);
 
-    // Thực hiện logic gửi email đặt lại mật khẩu tại đây
+        // Thực hiện logic gửi email đặt lại mật khẩu tại đây
+        // Ví dụ: $this->authService->sendResetPasswordEmail($request->email);
 
-    return back()->with('status', 'Hướng dẫn đặt lại mật khẩu đã được gửi qua email của bạn.');
-}
-
+        return back()->with('status', 'Hướng dẫn đặt lại mật khẩu đã được gửi qua email của bạn.');
+    }
 }

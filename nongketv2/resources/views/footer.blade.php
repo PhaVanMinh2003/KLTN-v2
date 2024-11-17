@@ -25,6 +25,19 @@
                 <a href="#" class="text-white ms-3"><i class="fab fa-youtube-square fa-lg"></i></a>
             </div>
         </div>
+        <div class="row mt-4">
+            <div class="col-md-12 mb-3">
+                <h5>Phương thức thanh toán</h5>
+                <p>
+                    <i class="fab fa-cc-visa fa-lg"></i>
+                    <i class="fab fa-cc-mastercard fa-lg ms-3"></i>
+                    <i class="fab fa-cc-paypal fa-lg ms-3"></i>
+                    <i class="fab fa-cc-amex fa-lg ms-3"></i>
+                    <i class="fab fa-cc-discover fa-lg ms-3"></i>
+                </p>
+                <p>Chúng tôi chấp nhận thanh toán qua các thẻ tín dụng và ví điện tử.</p>
+            </div>
+        </div>
         <hr class="my-4 bg-light">
         <p class="mb-1">&copy; 2024 Nông Sản Marketplace. Tất cả các quyền được bảo lưu.</p>
         <p class="mb-0">Thiết kế bởi <a href="#" class="text-white text-decoration-none">Công ty TNHH ABC</a></p>
