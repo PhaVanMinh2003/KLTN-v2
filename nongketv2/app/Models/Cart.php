@@ -25,4 +25,8 @@ class Cart extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function discountCodes()
+    {
+        return $this->hasMany(DiscountCode::class, 'cart_id', 'id');
+    }
 }

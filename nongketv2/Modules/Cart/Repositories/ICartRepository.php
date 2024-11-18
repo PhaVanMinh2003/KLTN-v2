@@ -5,7 +5,11 @@ namespace Modules\Cart\Repositories;
 interface ICartRepository
 {
     public function getCartByUserId($consumer_id);
-    public function createCart();
-    public function updateCart($cartId, array $data);
-    public function deleteCart($cartId);
+    public function applyDiscount($cartId, $discountCode);
+    public function updateItemQuantity($cartItemId, $quantity);
+    public function removeItem($cartItemId);
+    public function clearCart($userId);
+    public function createCart($userId);
+    public function getCartItem($cartId, $productId);
+    public function addItemToCart($cartId,$productId,$quantity,$price);
 }

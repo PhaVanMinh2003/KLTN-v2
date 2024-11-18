@@ -1,9 +1,11 @@
 <?php
 
 namespace Modules\Cart\Repositories;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Cart;
 use App\Models\CartItem;
+use App\Models\DiscountCode;
 
 class CartRepository implements ICartRepository
 {
@@ -13,47 +15,111 @@ class CartRepository implements ICartRepository
     {
         $this->model = $cart;
     }
-
     public function getCartByUserId($consumer_id)
-{
-    // Truy vấn Cart với eager loading cartItems và sản phẩm liên quan
-    $query = Cart::with('cartItems.product')
-                 ->where('consumer_id', $consumer_id);
-
-    // Kiểm tra câu lệnh SQL để debug
-    // Sử dụng toSql() để kiểm tra câu lệnh SQL được thực thi
-    // Cùng với get() để xem kết quả của truy vấn nếu cần
-    logger($query->toSql()); // In câu lệnh SQL vào log file
-    $cart = $query->first(); // Lấy bản ghi đầu tiên
-
-    // Nếu không tìm thấy cart cho consumer_id
-    if (!$cart) {
-        return response()->json(['message' => 'No cart found for the specified user'], 404);
-    }
-
-    // Trả về dữ liệu giỏ hàng
-    return $cart;
-}
-
-
-
-
-    public function createCart()
     {
-        return $this->model->create();
-    }
+        $query = Cart::with('cartItems.product')
+                    ->where('consumer_id', $consumer_id);
+        logger($query->toSql());
 
-    public function updateCart($cartId, array $data)
-    {
-        $cart = $this->model->find($cartId);
-        if ($cart) {
-            $cart->update($data);
+        $cart = $query->first();
+
+        if (!$cart) {
+            return response()->json(['message' => 'No cart found for the specified user'], 404);
         }
+        // Kiểm tra và giới hạn số lượng sản phẩm theo tồn kho
+        foreach ($cart->cartItems as $cartItem) {
+            $availableStock = $cartItem->product->quantity;
+
+            // Nếu số lượng trong giỏ hàng lớn hơn tồn kho, giới hạn lại
+            if ($cartItem->quantity > $availableStock) {
+                $cartItem->quantity = $availableStock;
+            }
+        }
+
         return $cart;
     }
-
-    public function deleteCart($cartId)
+    public function applyDiscount($cartId, $discountCode)
     {
-        return $this->model->destroy($cartId);
+        $discount = DiscountCode::where('code', $discountCode)->first();
+
+        if (!$discount) {
+            Log::info('Discount code not found', ['cartId' => $cartId, 'discountCode' => $discountCode]);
+            return null;
+        }
+
+        $cart = Cart::find($cartId);
+        if (!$cart) {
+            Log::info('Cart not found', ['cartId' => $cartId]);
+            return null;
+        }
+
+        $totalAmount = $cart->cartItems->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
+
+        $discountAmount = $totalAmount * ($discount->percentage / 100);
+        $discountedTotal = $totalAmount - $discountAmount;
+
+        $cart->update(['discount_code' => $discountCode, 'discount_amount' => $discountAmount]);
+
+        Log::info('Discount applied', [
+            'cartId' => $cartId,
+            'discountCode' => $discountCode,
+            'totalAmount' => $totalAmount,
+            'discountAmount' => $discountAmount,
+            'discountedTotal' => $discountedTotal
+        ]);
+
+        return $discountedTotal;
     }
+    public function removeItem($cartItemId)
+    {
+        $cartItem = CartItem::find($cartItemId);
+
+        if ($cartItem) {
+            $cartItem->delete();
+            Log::info('Cart item removed', ['cartItemId' => $cartItemId]);
+        } else {
+            Log::info('Cart item not found', ['cartItemId' => $cartItemId]);
+        }
+
+        return $cartItem;
+    }
+    public function updateItemQuantity($cartItemId, $quantity)
+    {
+        $cartItem = CartItem::find($cartItemId);
+        $cartItem->quantity = $quantity;
+        $cartItem->save();
+        return $cartItem;
+    }
+    public function clearCart($userId)
+    {
+        $cart = Cart::where('consumer_id', $userId)->first();
+
+        if ($cart) {
+            $cart->cartItems()->delete();
+            Log::info('Cart cleared', ['userId' => $userId]);
+        } else {
+            Log::info('Cart not found for user', ['userId' => $userId]);
+        }
+
+        return $cart;
+    }
+    public function createCart($userId){
+        return Cart::create(['consumer_id' =>$userId]);
+    }
+    public function addItemToCart($cartId,$productId,$quantity,$price){
+        return CartItem::create([
+            'cart_id'=>$cartId,
+            'product_id'=>$productId,
+            'quantity'=>$quantity,
+            'price'=>$price
+        ]);
+    }
+    public function getCartItem($cartId, $productId)
+    {
+        return CartItem::where('cart_id', $cartId)->where('product_id', $productId)->first();
+    }
+
 }
+

@@ -1,5 +1,6 @@
 <?php
 use Modules\Cart\Http\Controllers\CartController;
+use Modules\Cart\Http\Controllers\CartAddItemController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -10,8 +11,11 @@ use Modules\Cart\Http\Controllers\CartController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
-}); 
+    Route::post('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::delete('/cart/remove/{item}', [CartController::class, 'removeItem'])->name('cart.removeItem');
+    Route::post('/cart/apply-discount/{cartId}', [CartController::class, 'applyDiscount'])->name('cart.applyDiscount');
+    Route::post('/cart/add',[CartAddItemController::class,'addItem'])->name('cart.addItem');
+});
