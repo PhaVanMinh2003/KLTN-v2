@@ -1,6 +1,5 @@
 <?php
 namespace Modules\Cart\Http\Controllers;
-use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -26,7 +25,7 @@ class CartAddItemController extends Controller
         $quantity = $request->input('quantity');
         $price = $request->input('price');
         if (!$price) {
-            $product = Product::findOrFail($productId);  // Lấy thông tin sản phẩm từ DB
+            $product = Product::findOrFail($productId);
             $price = $product->price;
         }
         $cartItem = $this->cartService->addProductToCart($productId, $quantity, $price);

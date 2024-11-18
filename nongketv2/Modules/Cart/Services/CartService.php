@@ -50,10 +50,8 @@ class CartService implements ICartService
     }
     public function addProductToCart($productId, $quantity, $price)
     {
-        // Lấy thông tin user hiện tại
         $userId = Auth::id();
 
-        // Kiểm tra giỏ hàng của user
         $cart = $this->cartRepository->getCartByUserId($userId);
         if (!$cart) {
             $cart = $this->cartRepository->createCart($userId);
@@ -62,7 +60,7 @@ class CartService implements ICartService
         $cartItem = $this->cartRepository->getCartItem($cart->id, $productId);
         if ($cartItem) {
             // Cập nhật số lượng nếu sản phẩm đã có
-            $cartItem = $this->cartRepository->updateItemQuantity($cartItem->id, $cartItem->quantity + $quantity);
+            $cartItem = $this->cartRepository->updateItemQuantity($cartItem->id, $cartItem->quantity + $quantity,$price);
         } else {
             // Thêm sản phẩm mới vào giỏ hàng
             $cartItem = $this->cartRepository->addItemToCart($cart->id, $productId, $quantity, $price);

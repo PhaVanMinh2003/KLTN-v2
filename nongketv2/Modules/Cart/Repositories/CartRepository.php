@@ -85,13 +85,20 @@ class CartRepository implements ICartRepository
 
         return $cartItem;
     }
-    public function updateItemQuantity($cartItemId, $quantity)
-    {
-        $cartItem = CartItem::find($cartItemId);
+    public function updateItemQuantity($cartItemId, $quantity, $price)
+{
+    $cartItem = CartItem::find($cartItemId);
+
+    if ($cartItem) {
         $cartItem->quantity = $quantity;
+        $cartItem->price = $quantity * $price;
         $cartItem->save();
-        return $cartItem;
     }
+
+    return $cartItem;
+}
+
+
     public function clearCart($userId)
     {
         $cart = Cart::where('consumer_id', $userId)->first();
