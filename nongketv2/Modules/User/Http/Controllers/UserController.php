@@ -5,6 +5,7 @@ namespace Modules\User\Http\Controllers;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -25,16 +26,24 @@ class UserController extends Controller
     {
         return view('user::create');
     }
+    public function showAccountInfo()
+    {
+        return view('user::profile');
+    }
+    public function deleteAccount()
+{
+    $user = Auth::user();
+    $user->delete(); // Xóa tài khoản người dùng
+    Auth::logout(); // Đăng xuất sau khi xóa tài khoản
+    return redirect()->route('home'); // Chuyển hướng về trang chủ
+}
 
     /**
      * Store a newly created resource in storage.
      * @param Request $request
      * @return Renderable
      */
-    public function store(Request $request)
-    {
-        //
-    }
+#
 
     /**
      * Show the specified resource.

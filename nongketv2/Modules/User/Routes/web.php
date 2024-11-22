@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Modules\User\Http\Controllers\AuthController;
+use Modules\User\Http\Controllers\UserController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -29,3 +30,8 @@ Route::group(['namespace' => 'Modules\User\Http\Controllers'], function() {
 });
 
 
+Route::group(['namespace' => 'Modules\User\Http\Controllers'], function() {
+    Route::get('/account', [UserController::class, 'showAccountInfo'])->name('account.info');
+    Route::delete('/account', [UserController::class, 'deleteAccount'])->name('account.delete');
+
+});

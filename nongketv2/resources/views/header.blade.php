@@ -2,15 +2,17 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Phần bên trái chứa logo -->
-            <div class="col-lg-3 d-flex align-items-center justify-content-center">
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" style="height: 150px;">
+            <div class="col-lg-3 d-flex align-items-center justify-content-start">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo" style="height: 150px; margin-left: 100px;">
             </div>
 
             <!-- Phần bên phải chứa các chức năng (navbar) -->
             <div class="col-lg-9">
                 <div class="d-flex justify-content-between align-items-center">
-                    <h1 class="h3">Nông Sản Marketplace</h1>
+                    <!-- Tên trang web -->
+                    <h1 class="h3 text-white">Nông Sản Marketplace</h1>
 
+                    <!-- Avatar hoặc Icon và tìm kiếm -->
                     <div class="d-flex align-items-center">
                         <!-- Gọi file tìm kiếm -->
                         @include('maincontent.search')
@@ -18,7 +20,8 @@
                         <!-- Avatar hoặc Icon -->
                         <div class="ms-3">
                             @auth
-                                <img src="{{ url('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle" style="height: 40px; width: 40px; border: 2px solid white;">
+                                <!-- Nếu người dùng có ảnh đại diện, sử dụng ảnh này -->
+                                <img src="{{ auth()->user()->img ?? url('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle" style="height: 40px; width: 40px; border: 2px solid white;">
                                 <span class="ms-2 text-white">{{ Auth::user()->name }}</span>
                             @else
                                 <i class="fas fa-user-circle" style="font-size: 40px; color: white;"></i>
@@ -51,12 +54,21 @@
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown" id="account-menu" style="display: none;">
-                                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Tài Khoản</a>
-                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                        <li><a class="dropdown-item" href="#">Thông Tin Cá Nhân</a></li>
-                                        <li><a class="dropdown-item" href="#" id="logout-btn">Đăng Xuất</a></li>
-                                    </ul>
-                                </li>
+    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Tài Khoản
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li>
+            <a class="dropdown-item load-content" href="#" data-url="{{ route('account.info') }}">
+                Thông Tin Cá Nhân
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#" id="logout-btn">Đăng Xuất</a>
+        </li>
+    </ul>
+</li>
+
                                 <li class="nav-item" id="login-register-links">
                                     <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.login.form') }}">
                                         <i class="fas fa-user-plus"></i> Đăng Nhập
@@ -73,6 +85,7 @@
         </div>
     </div>
 </header>
+
 <script>
     document.addEventListener('DOMContentLoaded', function () {
     // Kiểm tra trạng thái đăng nhập qua Laravel Auth

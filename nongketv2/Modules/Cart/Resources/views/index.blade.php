@@ -1,8 +1,7 @@
-
 <div class="container my-5">
     <!-- Tiêu đề giỏ hàng -->
-    <div class="row mb-4">
-        <div class="col text-center">
+    <div class="row mb-4 text-center">
+        <div class="col">
             <h2 class="custom-orange">Giỏ Hàng Của Bạn</h2>
             <p>Kiểm tra các sản phẩm trong giỏ hàng và thực hiện thanh toán.</p>
             <button class="btn btn-danger" onclick="confirm('Bạn có chắc chắn muốn xóa toàn bộ giỏ hàng không?') && document.getElementById('clear-cart-form').submit();">
@@ -16,15 +15,15 @@
 
     <!-- Thông báo -->
     @if(session('success'))
-    <div class="alert alert-success text-center">
-        {{ session('success') }}
-    </div>
+        <div class="alert alert-success text-center">
+            {{ session('success') }}
+        </div>
     @endif
 
     @if(session('error'))
-    <div class="alert alert-danger text-center">
-        {{ session('error') }}
-    </div>
+        <div class="alert alert-danger text-center">
+            {{ session('error') }}
+        </div>
     @endif
 
     <!-- Danh sách sản phẩm trong giỏ hàng -->
@@ -33,25 +32,25 @@
         <div class="col-12 mb-4">
             <div class="card custom-card">
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row align-items-center">
                         <div class="col-md-2">
                             <img src="{{ $item->product->image_url ?? 'https://via.placeholder.com/150' }}" alt="Sản phẩm" class="img-fluid">
                         </div>
                         <div class="col-md-6">
-    <h5 class="card-title">{{ $item->product->name }}</h5>
-    <p class="card-text">{{ $item->product->description ?? 'Mô tả sản phẩm chi tiết' }}</p>
+                            <h5 class="card-title">{{ $item->product->name }}</h5>
+                            <p class="card-text">{{ $item->product->description ?? 'Mô tả sản phẩm chi tiết' }}</p>
 
-    <nForm gửi yêu cầu xóa sản phẩm -->
-    <form action="{{ route('cart.removeItem', $item->id) }}" method="POST">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-outline-danger btn-sm">Xoá</button>
-    </form>
+                            <!-- Form gửi yêu cầu xóa sản phẩm -->
+                            <form action="{{ route('cart.removeItem', $item->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Xoá</button>
+                            </form>
 
-    @if($item->quantity > $item->product->stock)
-        <p class="text-danger mt-2">Sản phẩm này chỉ còn {{ $item->product->stock }} trong kho!</p>
-    @endif
-</div>
+                            @if($item->quantity > $item->product->stock)
+                                <p class="text-danger mt-2">Sản phẩm này chỉ còn {{ $item->product->stock }} trong kho!</p>
+                            @endif
+                        </div>
 
                         <div class="col-md-2">
                             <input type="number" class="form-control" name="items[{{ $item->id }}][quantity]" value="{{ $item->quantity }}" min="1" max="{{ $item->product->stock }}">
@@ -67,25 +66,23 @@
     </div>
 
     <!-- Tổng giá trị giỏ hàng và các thao tác -->
-<div class="row mt-5">
-    <!-- Cột trái: Mã giảm giá -->
-    <div class="col-md-8">
-        <div class="card custom-card">
-            <div class="card-body">
-                <h5 class="card-title">Mã Giảm Giá</h5>
-                <form action="{{ route('cart.applyDiscount', ['cartId' => $cartId]) }}" method="POST">
-                    @csrf
-                    <input type="text" class="form-control mb-3" name="discount_code" placeholder="Nhập mã giảm giá">
-                    <button type="submit" class="btn custom-button">Áp Dụng</button>
-                </form>
-                @if(session('discount_amount'))
-                    <p class="text-success mt-2">Đã áp dụng mã giảm giá: -{{ number_format(session('discount_amount')) }}₫</p>
-                @endif
+    <div class="row mt-5">
+        <!-- Cột trái: Mã giảm giá -->
+        <div class="col-md-8">
+            <div class="card custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Mã Giảm Giá</h5>
+                    <form action="{{ route('cart.applyDiscount', ['cartId' => $cartId]) }}" method="POST">
+                        @csrf
+                        <input type="text" class="form-control mb-3" name="discount_code" placeholder="Nhập mã giảm giá">
+                        <button type="submit" class="btn custom-button">Áp Dụng</button>
+                    </form>
+                    @if(session('discount_amount'))
+                        <p class="text-success mt-2">Đã áp dụng mã giảm giá: -{{ number_format(session('discount_amount')) }}₫</p>
+                    @endif
+                </div>
             </div>
         </div>
-    </div>
-</div>
-
 
         <!-- Cột phải: Tổng giá trị -->
         <div class="col-md-4">
@@ -126,6 +123,7 @@
         </div>
     </div>
 </div>
+
 
 <script>
     document.querySelectorAll('input[name^="items"]').forEach(input => {
@@ -201,4 +199,5 @@
     .card-title {
         font-size: 18px;
     }
+    
 </style>

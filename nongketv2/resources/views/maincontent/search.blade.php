@@ -20,7 +20,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px;
-    width: 100%;
+    width: 350px;
     box-sizing: border-box;
 }
 
