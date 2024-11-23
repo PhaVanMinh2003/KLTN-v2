@@ -29,8 +29,5 @@ class DiscountCode extends Model
     {
         return $this->hasMany(OrderDiscount::class, 'discount_code_id', 'discount_code_id');
     }
-    public function cart()
-    {
-        return $this->belongsTo(Cart::class, 'cart_id', 'id');
-    }
+    
 }
