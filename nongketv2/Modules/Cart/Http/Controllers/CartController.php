@@ -2,10 +2,13 @@
 
 namespace Modules\Cart\Http\Controllers;
 use Illuminate\Support\Facades\Log;
-
+use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Cart\Services\ICartService;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Cart;
+use App\Models\DiscountCode;
 class CartController extends Controller
 {
     protected $cartService;
@@ -29,7 +32,6 @@ class CartController extends Controller
 
         return view('cart::index', compact('cart', 'cartId'));
     }
-
     public function update(Request $request, $itemId)
     {
         $validated = $request->validate([
@@ -37,16 +39,22 @@ class CartController extends Controller
         ]);
 
         try {
-            Log::info('Cập nhật số lượng sản phẩm cho người dùng ID: ' . auth()->id() . ', Item ID: ' . $itemId . ', Số lượng: ' . $validated['quantity']);
-            $this->cartService->updateCartItemQuantity($itemId, $validated['quantity']);
+            // Retrieve the cart item to get the price
+            $cartItem = CartItem::find($itemId);
+
+            // Check if the cart item exists
+            if (!$cartItem) {
+                throw new \Exception('Không tìm thấy sản phẩm trong giỏ hàng.');
+            }
+
+            // Update the cart item quantity
+            $this->cartService->updateCartItemQuantity($itemId, $validated['quantity'], $cartItem->price);
+
             return redirect()->route('cart.index')->with('success', 'Giỏ hàng đã được cập nhật.');
         } catch (\Exception $e) {
-            Log::error('Lỗi khi cập nhật giỏ hàng cho người dùng ID: ' . auth()->id() . '. Lỗi: ' . $e->getMessage());
             return redirect()->route('cart.index')->with('error', $e->getMessage());
         }
     }
-
-
     public function clear(Request $request)
     {
         try {
@@ -64,46 +72,48 @@ class CartController extends Controller
             return redirect()->route('cart.index')->with('error', $e->getMessage());
         }
     }
+    public function removeItem(Request $request, $cartItemId)
+    {
+        try {
+            Log::info('Xóa sản phẩm khỏi giỏ hàng, cartItemId: ' . $cartItemId);
+            $isRemoved = $this->cartService->removeItem($cartItemId);
 
-
-public function removeItem(Request $request, $cartItemId)
-{
-    try {
-        Log::info('Xóa sản phẩm khỏi giỏ hàng, cartItemId: ' . $cartItemId);
-        $isRemoved = $this->cartService->removeItem($cartItemId);
-
-        if ($isRemoved) {
-            return redirect()->route('cart.index')->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng.');
-        } else {
-            return redirect()->route('cart.index')->with('error', 'Không thể xóa sản phẩm.');
+            if ($isRemoved) {
+                return redirect()->route('cart.index')->with('success', 'Sản phẩm đã được xóa khỏi giỏ hàng.');
+            } else {
+                return redirect()->route('cart.index')->with('error', 'Không thể xóa sản phẩm.');
+            }
+        } catch (\Exception $e) {
+            Log::error('Lỗi khi xóa sản phẩm khỏi giỏ hàng. Lỗi: ' . $e->getMessage());
+            return redirect()->route('cart.index')->with('error', $e->getMessage());
         }
-    } catch (\Exception $e) {
-        Log::error('Lỗi khi xóa sản phẩm khỏi giỏ hàng. Lỗi: ' . $e->getMessage());
-        return redirect()->route('cart.index')->with('error', $e->getMessage());
     }
-}
+    public function applyDiscountCode(Request $request)
+    {
+        $request->validate([
+            'discount_code' => 'required|string|exists:discount_codes,code',
+        ]);
 
-public function applyDiscount(Request $request, $cartId)
-{
-    $request->validate([
-        'discount_code' => 'required|string|max:255',
-    ]);
+        $userId = Auth::id();
+        $discountCode = $request->input('discount_code');
 
-    $discountCode = $request->input('discount_code');
+        try {
+            // Áp dụng giảm giá vào giỏ hàng thông qua service
+            $updatedCart = $this->cartService->applyDiscountCode($userId, $discountCode);
 
-    try {
-        Log::info('Áp dụng mã giảm giá cho giỏ hàng ID: ' . $cartId . ', Mã giảm giá: ' . $discountCode);
-        $discountedTotal = $this->cartService->applyDiscount($cartId, $discountCode);
-
-        if ($discountedTotal === null) {
-            return redirect()->route('cart.index')->with('error', 'Mã giảm giá không hợp lệ hoặc không thể áp dụng.');
+            // Gửi phản hồi thành công
+            return response()->json([
+                'success' => true,
+                'message' => 'Mã giảm giá đã được áp dụng.',
+                'discount_amount' => number_format($updatedCart->discount_amount),
+                'cart' => $updatedCart,
+            ]);
+        } catch (\Exception $e) {
+            // Nếu có lỗi, trả về phản hồi lỗi
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 400);
         }
-
-        return redirect()->route('cart.index')->with('success', 'Mã giảm giá đã được áp dụng. Tổng cộng sau giảm giá là: ' . number_format($discountedTotal, 0, ',', '.') . ' VND');
-    } catch (\Exception $e) {
-        Log::error('Lỗi khi áp dụng mã giảm giá cho giỏ hàng ID: ' . $cartId . '. Lỗi: ' . $e->getMessage());
-        return redirect()->route('cart.index')->with('error', $e->getMessage());
     }
-}
-
 }

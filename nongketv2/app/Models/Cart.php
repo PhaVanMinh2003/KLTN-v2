@@ -15,6 +15,9 @@ class Cart extends Model
         'consumer_id',
         'created_at',
         'updated_at',
+        'discount_code_id',
+        'discount_amount',
+        'final_total'
     ];
 
     public function cartItems()
@@ -25,7 +28,7 @@ class Cart extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function DiscountCode()
+    public function discountCode()
     {
         return $this->belongsTo(DiscountCode::class, 'discount_code_id', 'discount_code_id');
     }

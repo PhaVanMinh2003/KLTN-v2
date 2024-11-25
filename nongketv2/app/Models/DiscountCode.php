@@ -29,5 +29,5 @@ class DiscountCode extends Model
     {
         return $this->hasMany(OrderDiscount::class, 'discount_code_id', 'discount_code_id');
     }
-    
+
 }

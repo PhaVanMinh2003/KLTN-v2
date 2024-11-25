@@ -16,6 +16,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
     Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
     Route::delete('/cart/remove/{item}', [CartController::class, 'removeItem'])->name('cart.removeItem');
-    Route::post('/cart/apply-discount/{cartId}', [CartController::class, 'applyDiscount'])->name('cart.applyDiscount');
     Route::post('/cart/add',[CartAddItemController::class,'addItem'])->name('cart.addItem');
+    Route::post('/cart/apply-discount', [CartController::class, 'applyDiscountCode'])->name('cart.applyDiscountCode');
 });

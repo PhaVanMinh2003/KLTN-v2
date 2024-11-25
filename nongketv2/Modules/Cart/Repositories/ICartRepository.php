@@ -12,4 +12,5 @@ interface ICartRepository
     public function createCart($userId);
     public function getCartItem($cartId, $productId);
     public function addItemToCart($cartId,$productId,$quantity,$price);
+    public function updateDiscountCode($cartId, $discountCodeId, $discountAmount);
 }

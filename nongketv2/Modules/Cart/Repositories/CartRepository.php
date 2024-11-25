@@ -86,19 +86,17 @@ class CartRepository implements ICartRepository
         return $cartItem;
     }
     public function updateItemQuantity($cartItemId, $quantity, $price)
-{
-    $cartItem = CartItem::find($cartItemId);
+    {
+        $cartItem = CartItem::find($cartItemId);
 
-    if ($cartItem) {
-        $cartItem->quantity = $quantity;
-        $cartItem->price = $quantity * $price;
-        $cartItem->save();
-    }
+        if ($cartItem) {
+            $cartItem->quantity = $quantity;
+            $cartItem->price = $quantity * $price;
+            $cartItem->save();
+        }
 
     return $cartItem;
 }
-
-
     public function clearCart($userId)
     {
         $cart = Cart::where('consumer_id', $userId)->first();
@@ -127,6 +125,16 @@ class CartRepository implements ICartRepository
     {
         return CartItem::where('cart_id', $cartId)->where('product_id', $productId)->first();
     }
+    public function updateDiscountCode($cartId, $discountCodeId, $discountAmount)
+    {
+        // Tìm giỏ hàng và cập nhật thông tin
+        $cart = Cart::find($cartId);
+        $cart->discount_code_id = $discountCodeId;
+        $cart->discount_amount = $discountAmount;
+        $cart->final_total = $cart->total_amount - $discountAmount;
+        $cart->save();
 
+        return $cart;
+    }
 }
 

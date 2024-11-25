@@ -47,6 +47,10 @@ class CartServiceProvider extends ServiceProvider
             \Modules\Cart\Repositories\CartItemRepository::class
         );
         $this->app->bind(
+            \Modules\Cart\Repositories\IDiscountCodeRepository::class,
+            \Modules\Cart\Repositories\DiscountCodeRepository::class
+        );
+        $this->app->bind(
             \Modules\Cart\Services\ICartService::class,
             \Modules\Cart\Services\CartService::class
         );
