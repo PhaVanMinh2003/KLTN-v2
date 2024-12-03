@@ -19,19 +19,75 @@ class CartController extends Controller
     }
     public function index()
     {
-        $cart = $this->cartService->getCart(auth()->id());
-        if (!$cart) {
-            Log::info('Giỏ hàng trống cho người dùng ID: ' . auth()->id());
-            return view('cart::index', ['message' => 'Giỏ hàng của bạn hiện tại trống!']);
+        // Giả sử user hiện tại đã đăng nhập
+        $user = auth()->user();
+
+        // Lấy giỏ hàng của user
+        $cart = Cart::with('cartItems.product')->where('consumer_id', $user->id)->first();
+
+        // Tính tổng tạm tính
+        $subtotal = $cart ? $cart->cartItems->sum(function ($item) {
+            return $item->price * $item->quantity;
+        }) : 0;
+
+        // Lấy mã giảm giá từ session
+        $discount = session('discount_amount', 0);
+        $total = $subtotal - $discount;
+
+        return view('cart::index', compact('cart', 'subtotal', 'discount', 'total'));
+    }
+
+    public function applyDiscount(Request $request)
+    {
+        // Xác thực dữ liệu đầu vào
+        $request->validate([
+            'discount_code' => 'required|string',
+        ]);
+
+        $user = auth()->user();
+
+        // Lấy mã giảm giá từ input
+        $code = $request->input('discount_code');
+
+        // Kiểm tra mã giảm giá có tồn tại và hợp lệ
+        $discountCode = DiscountCode::where('code', $code)
+            ->where('start_date', '<=', now())
+            ->where('end_date', '>=', now())
+            ->where('status', 1) // Đảm bảo mã giảm giá đang hoạt động
+            ->first();
+
+        if (!$discountCode) {
+            return redirect()->back()->withErrors(['discount_code' => 'Mã giảm giá không hợp lệ.']);
         }
 
-        Log::info('Giỏ hàng của người dùng ID: ' . auth()->id() . ' đã được lấy thành công.');
+        // Lưu mã giảm giá vào session
+        session([
+            'discount_code' => $code,
+            'discount_amount' => $discountCode->discount_value,
+        ]);
 
-        // Truyền cartId vào view
-        $cartId = $cart->id;
-
-        return view('cart::index', compact('cart', 'cartId'));
+        return redirect()->back()->with('success', 'Áp dụng mã giảm giá thành công!');
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function update(Request $request, $itemId)
     {
         $validated = $request->validate([

@@ -8,32 +8,47 @@ use Illuminate\Routing\Controller;
 use Modules\Cart\Services\ICartService;
 use Illuminate\Support\Facades\Response;
 use App\Models\Cart;
+use App\Models\CartItem;
 
 
 class CartDeleteItemController extends Controller
 {
-    public function removeCartItem($cartItemId)
-{
-    // Tìm giỏ hàng của người dùng hiện tại
-    $cart = Cart::where('user_id', auth()->id())->first();
+    public function removeItem(Request $request)
+    {
+        $request->validate([
+            'item_id' => 'required|integer', // Xác thực ID của item
+        ]);
 
-    if (!$cart) {
-        return response()->json(['success' => false, 'message' => 'Giỏ hàng không tồn tại'], 404);
+        $user = auth()->user();
+
+        // Tìm cart item dựa vào user và item ID
+        $cartItem = CartItem::where('id', $request->item_id)
+            ->whereHas('cart', function ($query) use ($user) {
+                $query->where('consumer_id', $user->id);
+            })
+            ->first();
+
+        if (!$cartItem) {
+            return response()->json(['error' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
+        }
+
+        // Xóa sản phẩm khỏi giỏ hàng
+        $cartItem->delete();
+
+        // Tính lại tổng tạm tính và tổng tiền
+        $cart = Cart::with('cartItems')->where('consumer_id', $user->id)->first();
+        $subtotal = $cart ? $cart->cartItems->sum(function ($item) {
+            return $item->price * $item->quantity;
+        }) : 0;
+        $discount = session('discount_amount', 0);
+        $total = $subtotal - $discount;
+
+        return response()->json([
+            'success' => 'Xóa sản phẩm thành công',
+            'subtotal' => $subtotal,
+            'total' => $total,
+        ]);
     }
-
-    // Tìm cart item trong giỏ hàng
-    $cartItem = $cart->cartItems()->find($cartItemId);
-
-    if (!$cartItem) {
-        return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại trong giỏ hàng'], 404);
-    }
-
-    // Xóa sản phẩm khỏi giỏ hàng
-    $cartItem->delete();
-
-    return response()->json(['success' => true, 'message' => 'Sản phẩm đã được xóa khỏi giỏ hàng'], 200);
-}
-
 
 }
 

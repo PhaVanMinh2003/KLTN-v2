@@ -1,6 +1,7 @@
 <?php
 use Modules\Cart\Http\Controllers\CartController;
 use Modules\Cart\Http\Controllers\CartAddItemController;
+use Modules\Cart\Http\Controllers\CartDeleteItemController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,8 +15,7 @@ use Modules\Cart\Http\Controllers\CartAddItemController;
 Route::middleware('auth')->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
-    Route::post('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-    Route::delete('/cart/remove/{item}', [CartController::class, 'removeItem'])->name('cart.removeItem');
+    Route::delete('/cart/item', [CartDeleteItemController::class, 'removeItem'])->name('cart.removeItem');
     Route::post('/cart/add',[CartAddItemController::class,'addItem'])->name('cart.addItem');
-    Route::post('/cart/apply-discount', [CartController::class, 'applyDiscountCode'])->name('cart.applyDiscountCode');
+    Route::post('/cart/apply-discount', [CartController::class, 'applyDiscount'])->name('cart.applyDiscount');
 });

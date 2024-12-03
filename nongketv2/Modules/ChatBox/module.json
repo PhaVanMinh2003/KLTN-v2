@@ -1,0 +1,13 @@
+{
+    "name": "ChatBox",
+    "alias": "chatbox",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ChatBox\\Providers\\ChatBoxServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
