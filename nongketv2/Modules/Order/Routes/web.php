@@ -11,9 +11,11 @@ use Modules\Order\Http\Controllers\OrderController;
 |
 */
 
-Route::prefix('order')->group(function() {
-    Route::get('/create', [OrderController::class, 'createOrder'])->name('order.create');
-    Route::post('/store', [OrderController::class, 'storeOrder'])->name('order.store');
-    Route::get('/success', [OrderController::class, 'success'])->name('order.success');
+Route::prefix('order')->middleware('auth')->group(function () {
+    Route::get('/', 'OrderController@index')->name('order.index');
+    Route::post('/create', [OrderController::class, 'createOrder'])->name('order.create');
+    Route::get('/order/success', function () {
+        return view('order_success');
+    })->name('order.success');
 });
 

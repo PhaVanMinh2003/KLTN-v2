@@ -1,85 +1,57 @@
 <?php
+
 namespace Modules\Order\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use App\Models\Product;
+use Illuminate\Contracts\Support\Renderable;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Routing\Controller;
 
 class OrderController extends Controller
 {
-    // Hàm hiển thị trang nhập thông tin đơn hàng
-    public function createOrder()
-    {
-        // Giả sử bạn có một phương thức lấy các sản phẩm trong giỏ hàng
-        $cartItems = Cart::all(); // Hoặc lấy từ session nếu giỏ hàng lưu trong session
-        $totalAmount = $cartItems->sum(function ($item) {
-            return $item->quantity * $item->price;
-        }); // Tổng tiền trong giỏ
-        $shippingFee = 50000; // Phí vận chuyển mặc định
 
-        return view('order::index', compact('cartItems', 'totalAmount', 'shippingFee'));
+    public function index()
+    {
+        $cart = Session::get('cart', []);
+        if (empty($cart)) {
+            return redirect()->route('cart.index')->with('error', 'Giỏ hàng trống!');
+        }
+        return view('order::index',compact('cart'));
     }
-
-    public function storeOrder(Request $request)
+    public function createOrder(Request $request)
     {
-        // Validate dữ liệu từ form
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|numeric',
-            'email' => 'required|email',
-            'address' => 'required|string',
-            'payment_method' => 'required|string',
-            'shipping_method' => 'required|string',
-        ]);
+        $cart = Session::get('cart', []);
 
-        // Lấy các sản phẩm trong giỏ hàng
-        $cartItems = Cart::all(); // Hoặc lấy từ session nếu giỏ hàng lưu trong session
-
-        // Tính toán tổng giá trị đơn hàng
-        $totalAmount = $cartItems->sum(function ($item) {
-            return $item->quantity * $item->price;
-        });
-
-        // Phí vận chuyển
-        $shippingFee = 50000; // Có thể thay đổi tùy theo phương thức vận chuyển
-
-        // Tính tổng số tiền đơn hàng (bao gồm phí vận chuyển)
-        $finalAmount = $totalAmount + $shippingFee;
+        if (empty($cart)) {
+            return redirect()->route('cart::index')->with('error', 'Giỏ hàng trống!');
+        }
 
         // Tạo đơn hàng
         $order = Order::create([
-            'name' => $request->name,
-            'phone' => $request->phone,
-            'email' => $request->email,
-            'address' => $request->address,
-            'payment_method' => $request->payment_method,
-            'shipping_method' => $request->shipping_method,
-            'total_amount' => $finalAmount,
-            'status' => 'pending', // Trạng thái mặc định
+            'order_date' => now(),
+            'status' => 'pending',
+            'total_amount' => array_sum(array_map(function ($item) {
+                return $item['price'] * $item['quantity'];
+            }, $cart)),
         ]);
 
-        // Thêm các sản phẩm vào OrderItems
-        foreach ($cartItems as $item) {
-            $order->orderItems()->create([
-                'product_id' => $item->product_id,
-                'quantity' => $item->quantity,
-                'price' => $item->price,
+        // Lưu các mục đặt hàng
+        foreach ($cart as $item) {
+            OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $item['product_id'],
+                'quantity' => $item['quantity'],
+                'price' => $item['price'],
             ]);
         }
 
-        // Xóa các sản phẩm trong giỏ hàng sau khi đặt hàng
-        Cart::truncate(); // Hoặc session()->forget('cart') nếu bạn dùng session để lưu trữ giỏ hàng
+        // Xóa giỏ hàng khỏi session
+        Session::forget('cart');
 
-        // Chuyển hướng đến trang thành công
         return redirect()->route('order.success')->with('success', 'Đặt hàng thành công!');
     }
 
-    // Trang thành công
-    public function success()
-    {
-        return view('order::success');
-    }
 }

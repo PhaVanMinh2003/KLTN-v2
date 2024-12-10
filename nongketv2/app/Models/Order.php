@@ -23,4 +23,14 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+    public function calculateTotal()
+    {
+        $subtotal = $this->orderItems->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+
+        $discount = $this->orderDiscount ? $this->orderDiscount->discount_amount : 0;
+
+        return $subtotal - $discount;
+    }
 }

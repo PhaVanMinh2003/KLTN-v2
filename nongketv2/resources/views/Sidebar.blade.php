@@ -23,7 +23,7 @@
 .sidebar {
     background: #009688; /* Màu nền xanh ngọc */
     padding: 20px; /* Khoảng cách bên trong */
-    border-radius: 10px; /* Bo tròn góc */
+    border-radius: 1px; /* Bo tròn góc */
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Đổ bóng mạnh hơn */
 }
 

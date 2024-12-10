@@ -1,99 +1,117 @@
+-- Tạo cơ sở dữ liệu và sử dụng
 CREATE DATABASE nongsandb;
 USE nongsandb;
 
+-- Bảng người nông dân
 CREATE TABLE `farmers` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(20) NOT NULL,
     address TEXT,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Bảng loại sản phẩm
+CREATE TABLE `product_types` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    type_name VARCHAR(255) NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Bảng sản phẩm
 CREATE TABLE `products` (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
     farmer_id INT NOT NULL,
+    product_type_id INT NOT NULL,
     name VARCHAR(255) NOT NULL,
+    description TEXT DEFAULT NULL,
+    origin VARCHAR(255) DEFAULT NULL,
+    history TEXT DEFAULT NULL,
+    rating DECIMAL(3, 2) DEFAULT NULL,
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
     image_url VARCHAR(255) DEFAULT NULL,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL,
-    FOREIGN KEY (farmer_id) REFERENCES farmers(id)
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (farmer_id) REFERENCES farmers(id),
+    FOREIGN KEY (product_type_id) REFERENCES product_types(id)
 );
 
-ALTER TABLE products
-ADD COLUMN description TEXT DEFAULT NULL AFTER price,
-ADD COLUMN history TEXT DEFAULT NULL AFTER origin,
-ADD COLUMN rating DECIMAL(3, 2) DEFAULT NULL AFTER history;
-
+-- Bảng giỏ hàng
 CREATE TABLE `carts` (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Bảng chi tiết giỏ hàng
 CREATE TABLE `cart_items` (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    cart_id INT,
-    product_id INT,
+    cart_id INT NOT NULL,
+    product_id INT NOT NULL,
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (cart_id) REFERENCES carts(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );
 
+-- Bảng người dùng
+CREATE TABLE `users` (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    img VARCHAR(255) NULL,
+    role ENUM('client', 'farmer', 'admin') NOT NULL DEFAULT 'client',
+    email_verified_at DATETIME DEFAULT NULL,
+    remember_token VARCHAR(100) DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Bảng đơn hàng
 CREATE TABLE `orders` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    order_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     status VARCHAR(50) NOT NULL,
     total_amount DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Bảng chi tiết đơn hàng
 CREATE TABLE `order_items` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
 );
 
+-- Bảng thanh toán
 CREATE TABLE `payments` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     amount DECIMAL(10, 2) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
     status ENUM('pending', 'completed', 'failed') NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT NULL,
-    updated_at TIMESTAMP NULL DEFAULT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
 
-CREATE TABLE `users` (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    email_verified_at TIMESTAMP NULL DEFAULT NULL,
-    remember_token VARCHAR(100) DEFAULT NULL,
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-ALTER TABLE `users`
-ADD COLUMN `img` VARCHAR(255) NULL;
-ALTER TABLE `users`
-ADD COLUMN `role` ENUM('client', 'farmer', 'admin') NOT NULL DEFAULT 'client';
-
+-- Bảng mã giảm giá
 CREATE TABLE `discount_codes` (
     discount_code_id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
@@ -101,23 +119,24 @@ CREATE TABLE `discount_codes` (
     discount_type ENUM('percentage', 'fixed') NOT NULL,
     discount_value DECIMAL(10, 2) NOT NULL,
     min_purchase_amount DECIMAL(10, 2) DEFAULT NULL,
-    start_date TIMESTAMP NULL DEFAULT NULL,
-    end_date TIMESTAMP NULL DEFAULT NULL,
+    start_date DATETIME DEFAULT NULL,
+    end_date DATETIME DEFAULT NULL,
     status ENUM('active', 'inactive') NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    cart_id BIGINT UNSIGNED DEFAULT NULL -- Đảm bảo kiểu BIGINT UNSIGNED cho cart_id
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- Bảng giảm giá đơn hàng
 CREATE TABLE `order_discounts` (
     order_discount_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id BIGINT UNSIGNED NOT NULL,
+    order_id INT NOT NULL,
     discount_code_id INT NOT NULL,
     discount_amount DECIMAL(10, 2) NOT NULL,
-    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (discount_code_id) REFERENCES discount_codes(discount_code_id) ON DELETE CASCADE
 );
+
 INSERT INTO `nongsandb`.`products`
 (`product_id`, `farmer_id`, `name`, `quantity`, `price`, `description`, `image_url`, `history`, `rating`)
 VALUES ('6', '1', 'Táo đỏ', '456', '50000', 'Được lấy trực tiếp tại vườn', 'img\\Apple.jpg', 'lay tu dong', '0');
@@ -157,5 +176,4 @@ VALUES
 ('26', '1', 'Chôm CHôm', '318', '157000', 'trồng tại trung tân', 'img\\Rambutan.jpg', 'lay tu dong', '0'),
 ('27', '1', 'Mãng cầu', '258', '126000', 'trồng tại trung tân', 'img\\Soursop.jpg', 'lay tu dong', '0'),
 ('28', '1', 'Khế', '358', '86000', 'trồng tại trung tân', 'img\\Starfruit.jpg', 'lay tu dong', '0');
-delete from `nongsandb`.`products`  where product_id >=12;
-SELECT * FROM users WHERE email IN ('aivay.15092003@gmail.com', 'phamminh.15092003@gmail.com');
+

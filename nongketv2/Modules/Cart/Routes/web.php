@@ -12,10 +12,11 @@ use Modules\Cart\Http\Controllers\CartDeleteItemController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::middleware('auth')->group(function () {
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/update/{item}', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/item', [CartDeleteItemController::class, 'removeItem'])->name('cart.removeItem');
-    Route::post('/cart/add',[CartAddItemController::class,'addItem'])->name('cart.addItem');
-    Route::post('/cart/apply-discount', [CartController::class, 'applyDiscount'])->name('cart.applyDiscount');
+Route::prefix('cart')->middleware('auth')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/update/{item}', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/remove/{id}', [CartDeleteItemController::class, 'removeItem'])->name('cart.remove');
+    Route::post('/add',[CartAddItemController::class,'addItem'])->name('cart.addItem');
+    Route::post('/apply-discount', [CartController::class, 'applyDiscount'])->name('cart.applyDiscount');
 });
+
