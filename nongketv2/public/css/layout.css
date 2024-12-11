@@ -1,0 +1,31 @@
+.container-fluid {
+    padding: 0;
+    /* height: 100vh; */ /* Xóa dòng này để container không bị cố định chiều cao */
+}
+
+.row {
+    /* height: 100%; */ /* Xóa dòng này để hàng không bị cố định chiều cao */
+    margin: 0;
+}
+
+/*intro*/
+/* Hiệu ứng fade-in */
+.welcome-alert {
+    animation: fadeIn 2s ease-in-out; /* Thời gian hiển thị 2 giây */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Thêm đổ bóng */
+    border-radius: 10px; /* Bo góc cho mềm mại */
+    background: linear-gradient(45deg, #e3f2fd, #bbdefb); /* Tạo gradient cho nền */
+    color: #0d47a1; /* Màu chữ nổi bật */
+}
+
+/* Keyframes cho hiệu ứng mờ dần (fade-in) */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px); /* Bắt đầu từ vị trí hơi cao */
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0); /* Dần dần trở lại vị trí gốc */
+    }
+}
