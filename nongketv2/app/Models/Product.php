@@ -13,13 +13,20 @@ class Product extends Model
     protected $primaryKey = 'product_id';
     protected $fillable = [
         'farmer_id',
+        'product_type_id',
         'name',
+        'description',
+        'origin',
+        'history',
+        'rating',
         'quantity',
         'price',
         'image_url',
-        'created_at',
-        'updated_at',
     ];
+    public function productType()
+    {
+        return $this->belongsTo(ProductType::class, 'product_type_id');
+    }
 
     public function farmer()
     {
