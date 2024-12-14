@@ -1,50 +1,68 @@
-<header class="bg-success text-white py-3">
+<header class="bg-success text-white py-3 shadow">
     <div class="container-fluid">
-        <div class="row">
-            <!-- Phần bên trái chứa logo -->
-            <div class="col-lg-3 d-flex align-items-center justify-content-start">
-            <img src="{{ asset('img/logo.png') }}" alt="Logo" style="height: 150px; margin-left: 100px;">
+        <div class="row align-items-center">
+            <!-- Logo -->
+            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                <a href="#" class="d-flex align-items-center text-decoration-none">
+                    <img src="{{ asset('img/logo.png') }}" alt="Logo" class="img-fluid" style="height: 80px; margin-right: 15px;">
+                    <span class="fs-4 fw-bold text-white">Nông Sản Marketplace</span>
+                </a>
             </div>
 
-            <!-- Phần bên phải chứa các chức năng (navbar) -->
-            <div class="col-lg-9">
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- Tên trang web -->
-                    <h1 class="h3 text-white">Nông Sản Marketplace</h1>
+            <!-- Search Bar -->
+            <div class="col-lg-4 col-md-5">
+            @include('maincontent.search')
+            </div>
 
-                    <!-- Avatar hoặc Icon và tìm kiếm -->
-                    <div class="d-flex align-items-center">
-                        <!-- Gọi file tìm kiếm -->
-                        @include('maincontent.search')
-
-                        <!-- Avatar hoặc Icon -->
-                        <div class="ms-3">
-                            @auth
-                                <!-- Nếu người dùng có ảnh đại diện, sử dụng ảnh này -->
-                                <img src="{{ auth()->user()->img ?? url('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle" style="height: 40px; width: 40px; border: 2px solid white;">
-                                <span class="ms-2 text-white">{{ Auth::user()->name }}</span>
-                            @else
-                                <i class="fas fa-user-circle" style="font-size: 40px; color: white;"></i>
-                            @endauth
-                        </div>
-                    </div>
+            <!-- Extra Modules -->
+            <div class="col-lg-5 col-md-12 text-end d-flex justify-content-end align-items-center">
+                <!-- Notifications -->
+                <div class="me-3">
+                    <a href="#" class="text-white position-relative">
+                        <i class="fas fa-bell fa-lg"></i>
+                        <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">5</span>
+                    </a>
                 </div>
 
-                <!-- Thanh điều hướng (navbar) -->
-                <nav class="navbar navbar-expand-lg navbar-light bg-success mt-3">
-                    <div class="container">
+                <!-- Language Switcher -->
+                <div class="me-3">
+                    <select class="form-select form-select-sm bg-success text-white border-0" style="width: auto;">
+                        <option value="vi">🇻🇳 Tiếng Việt</option>
+                        <option value="en">🇺🇸 English</option>
+                    </select>
+                </div>
+
+                <!-- User Info -->
+                @auth
+                <div class="d-inline-flex align-items-center">
+                    <img src="{{ auth()->user()->img ?? url('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle me-2" style="height: 40px; width: 40px; border: 2px solid white;">
+                    <span class="text-white me-3">{{ Auth::user()->name }}</span>
+                    <button class="btn btn-sm btn-outline-light rounded-pill" id="logout-btn">Đăng Xuất</button>
+                </div>
+                @else
+                <a href="#" class="btn btn-sm btn-outline-light rounded-pill me-2 load-content" data-url="{{ route('user.login.form') }}">Đăng Nhập</a>
+                <a href="#" class="btn btn-sm btn-warning rounded-pill load-content" data-url="{{ route('user.register.form') }}">Đăng Ký</a>
+                @endauth
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="row mt-3">
+            <div class="col">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                    <div class="container-fluid">
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="collapse navbar-collapse" id="navbarNav">
-                            <ul class="navbar-nav me-auto">
+                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
-                                    <a class="nav-link text-white load-content" href="#" data-url="{{ route('homecontent') }}">
+                                    <a class="nav-link text-white load-content" href="#" id="home-link" data-url="{{ route('homecontent') }}">
                                         <i class="fas fa-home"></i> Trang Chủ
                                     </a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-white load-content" href="#" data-url="{{ route('productlist') }}">
+                                    <a class="nav-link text-white load-content" href="#" id="product-link" data-url="{{ route('productlist') }}">
                                         <i class="fas fa-shopping-basket"></i> Sản Phẩm
                                     </a>
                                 </li>
@@ -54,27 +72,30 @@
                                     </a>
                                 </li>
                                 <li class="nav-item dropdown" id="account-menu" style="display: none;">
-    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Tài Khoản
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li>
-            <a class="dropdown-item load-content" href="#" data-url="{{ route('account.info') }}">
-                Thông Tin Cá Nhân
-            </a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="#" id="logout-btn">Đăng Xuất</a>
-        </li>
-    </ul>
-</li>
-
+                                    <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Tài Khoản
+                                    </a>
+                                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li>
+                                            <a class="dropdown-item load-content" href="#" data-url="{{ route('account.info') }}">Thông Tin Cá Nhân</a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#" >cài đặt</a>
+                                            <!-- id="logout-btn" -->
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li class="nav-item" id="login-register-links">
                                     <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.login.form') }}">
                                         <i class="fas fa-user-plus"></i> Đăng Nhập
                                     </a>
                                     <a class="nav-link text-white load-content" href="#" data-url="{{ route('user.register.form') }}">
                                         <i class="fas fa-user-plus"></i> Đăng Ký
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white load-content" href="#" id="contact-link" ">
+                                        <i class="fas fa-envelope"></i> Liên Hệ
                                     </a>
                                 </li>
                             </ul>
@@ -85,6 +106,10 @@
         </div>
     </div>
 </header>
+
+
+
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -162,4 +187,16 @@ function loadContent(url) {
 #login-register-links a {
     display: inline-block; /* Đảm bảo các nút không bị đẩy xuống dòng */
 }
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+header .navbar-nav .nav-link {
+    transition: color 0.3s ease;
+}
+header .navbar-nav .nav-link:hover {
+    color: #f8d210;
+}
+
 </style>
