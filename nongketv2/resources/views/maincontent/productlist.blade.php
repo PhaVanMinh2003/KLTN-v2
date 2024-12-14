@@ -7,52 +7,177 @@
     </div>
 </div>
 
-<!-- Thanh hiển thị danh mục -->
-<div class="category-bar mt-4">
-    <ul class="categories">
-        <li><a href="?category=all" class="category-item active">Tất cả</a></li>
-        <li><a href="?category=fruits" class="category-item">Trái cây</a></li>
-        <li><a href="?category=vegetables" class="category-item">Rau củ</a></li>
-        <li><a href="?category=organic" class="category-item">Hữu cơ</a></li>
-        <li><a href="?category=dairy" class="category-item">Sữa</a></li>
-    </ul>
+<!-- Thêm liên kết Font Awesome để sử dụng icon -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+<style>
+    body {
+        font-family: 'Roboto', sans-serif;
+        background-color: #f9fafc;
+        margin: 0;
+        padding: 0;
+        color: #333;
+    }
+
+    /* Header Categories */
+    .category-bar {
+        background: linear-gradient(90deg, #ffd700, #ffa500);
+        padding: 15px;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-item {
+        display: inline-block;
+        text-decoration: none;
+        color: #fff;
+        padding: 10px 15px;
+        font-size: 16px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        transition: transform 0.3s, background-color 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .category-item:hover,
+    .category-item.active {
+        background-color: rgba(255, 255, 255, 0.7);
+        transform: scale(1.1);
+        color: #333;
+    }
+
+    /* Filter Section */
+    .filter-bar {
+        background-color: #fff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px auto;
+        max-width: 1200px;
+    }
+
+    .filter-bar h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #ff7700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .filter-item {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-item label {
+        font-size: 14px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-item select {
+        width: 100%;
+        padding: 10px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        outline: none;
+    }
+
+    /* Apply Button */
+    .apply-button {
+        background-color: #ffa500;
+        color: #fff;
+        padding: 10px 25px;
+        font-size: 14px;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        align-self: flex-end;
+    }
+
+    .apply-button:hover {
+        background-color: #ffd700;
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 768px) {
+        .filter-bar {
+            padding: 15px;
+        }
+
+        .filter-options {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .apply-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<!-- Giao diện -->
+<div class="category-bar">
+    <a href="?category=all" class="category-item active"><i class="fas fa-list"></i> Tất cả</a>
+    <a href="?category=fruits" class="category-item"><i class="fas fa-apple-alt"></i> Trái cây</a>
+    <a href="?category=vegetables" class="category-item"><i class="fas fa-carrot"></i> Rau củ</a>
+    <a href="?category=organic" class="category-item"><i class="fas fa-leaf"></i> Hữu cơ</a>
+    <a href="?category=dairy" class="category-item"><i class="fas fa-cheese"></i> Sữa</a>
 </div>
 
-<!-- Thanh lọc sản phẩm -->
-<div class="filter-bar mt-3">
-    <form action="#" method="GET" class="filter-form">
-        <div class="row">
-            <div class="col-md-3">
-                <label for="price-range" class="form-label">Khoảng giá:</label>
-                <select name="price-range" id="price-range" class="form-select">
-                    <option value="all">Tất cả</option>
-                    <option value="under-100">Dưới 100,000 VNĐ</option>
-                    <option value="100-500">100,000 - 500,000 VNĐ</option>
-                    <option value="over-500">Trên 500,000 VNĐ</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label for="sort-by" class="form-label">Sắp xếp theo:</label>
-                <select name="sort-by" id="sort-by" class="form-select">
-                    <option value="latest">Mới nhất</option>
-                    <option value="price-asc">Giá tăng dần</option>
-                    <option value="price-desc">Giá giảm dần</option>
-                    <option value="rating">Đánh giá cao</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label for="rating" class="form-label">Xếp hạng:</label>
-                <select name="rating" id="rating" class="form-select">
-                    <option value="all">Tất cả</option>
-                    <option value="4-star-up">4 sao trở lên</option>
-                    <option value="3-star-up">3 sao trở lên</option>
-                </select>
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
-            </div>
+<div class="filter-bar">
+    <h3><i class="fas fa-filter"></i> Bộ lọc sản phẩm</h3>
+    <div class="filter-options">
+        <div class="filter-item">
+            <label for="price-range"><i class="fas fa-dollar-sign"></i> Khoảng giá:</label>
+            <select name="price-range" id="price-range">
+                <option value="all">Tất cả</option>
+                <option value="under-100">Dưới 100,000 VNĐ</option>
+                <option value="100-500">100,000 - 500,000 VNĐ</option>
+                <option value="over-500">Trên 500,000 VNĐ</option>
+            </select>
         </div>
-    </form>
+        <div class="filter-item">
+            <label for="sort-by"><i class="fas fa-sort"></i> Sắp xếp theo:</label>
+            <select name="sort-by" id="sort-by">
+                <option value="latest">Mới nhất</option>
+                <option value="price-asc">Giá tăng dần</option>
+                <option value="price-desc">Giá giảm dần</option>
+                <option value="rating">Đánh giá cao</option>
+            </select>
+        </div>
+        <div class="filter-item">
+            <label for="rating"><i class="fas fa-star"></i> Xếp hạng:</label>
+            <select name="rating" id="rating">
+                <option value="all">Tất cả</option>
+                <option value="4-star-up">4 sao trở lên</option>
+                <option value="3-star-up">3 sao trở lên</option>
+            </select>
+        </div>
+    </div>
+    <button class="apply-button"><i class="fas fa-check"></i> Áp dụng</button>
 </div>
 
 <!-- Phần danh sách sản phẩm -->
