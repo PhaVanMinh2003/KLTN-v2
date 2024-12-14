@@ -11,10 +11,9 @@
     max-width: 1100px;
     margin: 5px auto;
     padding: 20px;
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
+
     border-radius: 2px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
 }
 
 .cart-container .cart-icon {
@@ -22,18 +21,21 @@
     align-items: center;
     font-size: 18px;
     color: #333;
+
 }
 
 .cart-container .cart-icon i {
     color: #007bff;
     font-size: 30px;
     margin-right: 10px;
+
 }
 
 .cart-container .cart-summary {
     text-align: right;
     font-size: 14px;
     color: #555;
+
 }
 
 .cart-container .cart-summary .promo {
@@ -44,14 +46,14 @@
 .cart-container .cart-header {
     font-weight: bold;
     color: #333;
-    border-bottom: 2px solid #ddd;
+    background-color: gold;
     padding: 10px 0;
 }
 
 .cart-container .cart-item {
     background-color: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+
+    border-radius:3px;
     padding: 10px;
     margin-bottom: 15px;
     position: relative;
