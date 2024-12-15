@@ -9,9 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, Notifiable;
-
 
     /**
      * The attributes that are mass assignable.
@@ -27,7 +25,8 @@ class User extends Authenticatable
         'created_at',
         'updated_at',
         'role',
-        'img'
+        'img',
+        'farmer_id', // Thêm farmer_id vào danh sách fillable
     ];
 
     /**
@@ -52,8 +51,18 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function cart()
     {
         return $this->hasOne(Cart::class);
     }
+
+    /**
+     * Relationship: User belongs to a Farmer (if the user is a farmer).
+     */
+    public function farmer()
+    {
+        return $this->belongsTo(Farmer::class, 'farmer_id');
+    }
 }
+

@@ -24,4 +24,13 @@ class Farmer extends Model
     {
         return $this->hasMany(Product::class);
     }
+
+    /**
+     * Relationship: Farmer can have many Users (linked as farmers).
+     */
+    public function users()
+    {
+        return $this->hasMany(User::class, 'farmer_id');
+    }
 }
+
