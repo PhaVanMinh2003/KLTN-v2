@@ -19,7 +19,7 @@ $(document).on('click', '.load-content', function(e) {
                 $('#content').html(response).fadeIn(500); // Hiển thị lại nội dung
             },
             error: function() {
-                alert('Error loading content');
+                alert('Không hiển thị được nội dung bạn mong muốn');
             }
         });
     });

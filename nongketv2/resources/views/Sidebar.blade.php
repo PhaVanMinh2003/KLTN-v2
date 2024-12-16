@@ -5,7 +5,7 @@
     </h5>
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-home"></i> Sản phẩm nổi bật</a>
+            <a class="nav-link  load-content" href="#" data-url="{{ route('products.index') }}"><i class="fas fa-home"></i> Đăng bán sản phẩm</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" href="#"><i class="fas fa-shopping-basket"></i> Thể loại</a>

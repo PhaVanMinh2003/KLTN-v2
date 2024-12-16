@@ -23,7 +23,7 @@
                             <h5 class="card-title text-center" style="color: #2f6f39;">{{ $product->name }}</h5>
                             <p class="card-text text-center text-success">{{ number_format($product->price, 0, ',', '.') }} VND</p>
                             <div class="d-flex justify-content-center">
-                                <a href="#" data-url="{{ route('showProductDetail', $product->product_id) }}" class="btn btn-warning btn-sm text-white">
+                                <a  href="#" data-url="{{ route('showProductDetail', $product->product_id) }}" class="btn btn-warning btn-sm text-white load-content">
                                     <i class="bi bi-info-circle"></i> Xem chi tiết
                                 </a>
                             </div>
@@ -179,4 +179,3 @@
 }
 </style>
 @endsection
-    

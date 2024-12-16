@@ -30,10 +30,15 @@
 <body>
     <div id="app">
             @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div style="color: red; font-weight: bold;">
+                    {{ session('error') }}
+                </div>
+            @endif
 
         @include('header')
         <div class="row">
