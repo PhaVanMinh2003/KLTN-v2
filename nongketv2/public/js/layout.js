@@ -5,18 +5,19 @@ $(document).on('click', '.load-content', function(e) {
 
     // Kiểm tra xem URL hiện tại có trùng với URL của liên kết không
     if (window.location.href === url) {
-        // Nếu trùng, cuộn về đầu trang mà không tải lại nội dung
         $('html, body').animate({ scrollTop: 0 }, 300);
-        return; // Dừng thực hiện AJAX request
+        return;
     }
 
-    // Nếu không trùng, tiếp tục với yêu cầu AJAX
+    // Cập nhật URL trên trình duyệt nhưng không tải lại trang
+    history.pushState(null, null, url);
+
     $('#content').fadeOut(300, function() {
         $.ajax({
             url: url,
             method: 'GET',
             success: function(response) {
-                $('#content').html(response).fadeIn(500); // Hiển thị lại nội dung
+                $('#content').html(response).fadeIn(500);
             },
             error: function() {
                 alert('Không hiển thị được nội dung bạn mong muốn');
@@ -24,4 +25,23 @@ $(document).on('click', '.load-content', function(e) {
         });
     });
 });
+
+// Xử lý lịch sử trình duyệt
+window.onpopstate = function() {
+    const url = window.location.href;
+
+    $('#content').fadeOut(300, function() {
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                $('#content').html(response).fadeIn(500);
+            },
+            error: function() {
+                alert('Không hiển thị được nội dung bạn mong muốn');
+            }
+        });
+    });
+};
+
 

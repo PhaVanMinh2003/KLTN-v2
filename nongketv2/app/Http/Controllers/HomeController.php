@@ -23,10 +23,16 @@ class HomeController extends Controller
     return view('home', compact('products', 'featuredProducts'));
 }
 
-    public function productlist()
+    public function productlist(Request $request)
     {
         $products = $this->productService->getAllProducts();
-        return view('maincontent.productlist', compact('products'));
+        if ($request->ajax()) {
+            return view('maincontent.productlist', compact('products'))->render();
+        }
+
+        // Nếu là yêu cầu bình thường, trả về layout đầy đủ
+        return view('app', compact('products'));
+
     }
 
     public function updateProductQuantity(Request $request)

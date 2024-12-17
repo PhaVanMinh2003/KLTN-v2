@@ -1,3 +1,4 @@
+
 <div class="banner">
     <div class="snowfall"></div>
     <div class="banner-content">
@@ -195,17 +196,54 @@
     </div>
     @endforeach
 </div>
+<div class="d-flex justify-content-center mt-4">
+    {{ $products->links('pagination::simple-bootstrap-4', ['class' => 'custom-pagination']) }}
+</div>
+
 
 
 <style>
     /* Phông chữ từ Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
-
     body {
         font-family: 'Roboto', sans-serif;
         background-color: #f9f9f9;
         color: #333;
     }
+/* Tùy chỉnh kiểu dáng phân trang */
+.custom-pagination {
+    font-size: 0.8rem;  /* Giảm kích thước chữ */
+    margin-top: 10px;   /* Khoảng cách từ trên */
+    display: inline-flex;  /* Đảm bảo phân trang nằm ngang */
+    justify-content: center;
+}
+
+.custom-pagination .page-item {
+    margin-right: 5px;  /* Khoảng cách giữa các nút */
+}
+
+.custom-pagination .page-link {
+    padding: 0.25rem 0.5rem;  /* Điều chỉnh padding */
+    font-size: 0.8rem;  /* Kích thước chữ */
+    border-radius: 0.25rem; /* Làm tròn các góc */
+    color: #007bff;  /* Màu chữ của các nút */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+/* Điều chỉnh màu sắc cho nút active */
+.custom-pagination .page-item.active .page-link {
+    background-color: #007bff; /* Màu nền của trang hiện tại */
+    color: white;  /* Màu chữ khi đang ở trang hiện tại */
+}
+
+/* Điều chỉnh màu sắc của nút disabled */
+.custom-pagination .page-item.disabled .page-link {
+    color: #ddd;  /* Màu chữ cho các nút không khả dụng */
+    pointer-events: none;  /* Vô hiệu hóa sự kiện click */
+}
+
 /* Danh mục */
 .category-bar {
     background-color: #ffa500; /* Màu nền cam nổi bật */
@@ -473,4 +511,25 @@
         snowContainer.appendChild(snowflake);
     }
 })();
+
+$(document).on('click', '.pagination a', function(e) {
+    e.preventDefault();
+
+    const url = $(this).attr('href');
+    history.pushState(null, null, url);
+
+    $('#content').fadeOut(300, function() {
+        $.ajax({
+            url: url,
+            method: 'GET',
+            success: function(response) {
+                $('#content').html(response).fadeIn(500);
+            },
+            error: function() {
+                alert('Không hiển thị được nội dung bạn mong muốn');
+            }
+        });
+    });
+});
+
     </script>

@@ -15,3 +15,15 @@
     max-height: 100%;
     display: none;
 }
+
+    .highlight {
+        color: #D4A017; /* Màu vàng đất */
+    }
+    .btn-highlight {
+        background-color: #D4A017;
+        color: white;
+    }
+    .btn-highlight:hover {
+        background-color: #C58E10; /* Màu đậm hơn khi hover */
+    }
+

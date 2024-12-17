@@ -5,10 +5,12 @@ use App\Models\Product;
 
 class ProductRepository implements IProductRepository
 {
+    // Repository
     public function all()
     {
-        return Product::all();
+        return Product::paginate(20);
     }
+
     public function searchByName(string $keyword, int $limit=null){
         $query = Product::where('name', 'LIKE', "%{$keyword}%");
 
