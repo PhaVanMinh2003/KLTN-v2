@@ -22,7 +22,7 @@ Route::group(['namespace' => 'Modules\User\Http\Controllers'], function() {
     Route::post('/login', [AuthController::class, 'login'])->name('user.login'); // Phương thức đăng nhập
 
     // Đăng xuất
-    Route::post('/logout', [AuthController::class, 'logout'])->name('user.logout'); // Đăng xuất
+    Route::post('/logout', [AuthController::class, 'logout'])->name('user.logout');
 
     // Quên mật khẩu
     Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('user.forgot-password.form');

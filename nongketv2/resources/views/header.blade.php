@@ -80,7 +80,7 @@
                                             <a class="dropdown-item load-content" href="#" data-url="{{ route('account.info') }}">Thông Tin Cá Nhân</a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item" href="#" >cài đặt</a>
+                                            <a class="dropdown-item" href="#" id="logout-btn">cài đặt</a>
                                             <!-- id="logout-btn" -->
                                         </li>
                                     </ul>
@@ -178,7 +178,8 @@ function loadContent(url) {
 }
 
 </script>
-<style>#login-register-links {
+<style>
+#login-register-links {
     display: flex;
     align-items: center; /* Căn chỉnh theo chiều dọc */
     gap: 15px; /* Khoảng cách giữa các nút */

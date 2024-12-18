@@ -8,7 +8,7 @@ class ProductRepository implements IProductRepository
     // Repository
     public function all()
     {
-        return Product::paginate(20);
+        return Product::paginate(16);
     }
 
     public function searchByName(string $keyword, int $limit=null){
