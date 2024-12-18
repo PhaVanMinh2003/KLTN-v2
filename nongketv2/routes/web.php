@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PaymentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -26,3 +27,6 @@ Route::post('/update-product', [HomeController::class, 'updateProductQuantity'])
 Route::get('/', [HomeController::class, 'FeaturedProducts'])->name('FeaturedProducts');
 Route::get('/products/{id}', [HomeController::class, 'showProductDetail'])->name('showProductDetail');
 
+
+Route::post('/vnpay_payment', [PaymentController::class, 'payment'])->name('payment.vnpay');
+Route::post('/shipcod_payment', [PaymentController::class, 'shipCode'])->name('payment.shipCode');

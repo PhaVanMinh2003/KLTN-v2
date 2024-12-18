@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giỏ hàng</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <style>
+
+
+<style>
 .cart-container {
     max-width: 1100px;
     margin: 5px auto;
@@ -220,8 +214,7 @@
     text-decoration: underline;
 }
 </style>
-</head>
-<body>
+
 <div class="container py-5" style="width:1100px; margin-left:5px">
     <div class="row">
         <div class="col-12">
@@ -282,24 +275,61 @@
                     @endforeach
 
                     <div class="cart-summary">
-                        <form action="{{ route('cart.applyDiscount') }}" method="POST">
-                            @csrf
+                        <!-- Discount Code Form -->
+                        <form action="http://127.0.0.1:8000/cart/apply-discount" method="POST">
+                            <input type="hidden" name="_token" value="aaUFoAQfQMyOpSRZ7cDn9LFf4X0eqRXjO1olpqaE">
                             <div class="form-group mb-3">
                                 <input type="text" name="discount_code" id="discount_code" class="form-control" placeholder="Nhập mã giảm giá">
                                 <button type="submit" class="btn btn-primary mt-2">Áp dụng</button>
                             </div>
                         </form>
-                        <h3>Tạm tính: <span id="subtotal">{{ number_format($subtotal, 0, ',', '.') }} đ</span></h3>
-                        <h3>Giảm giá: {{ number_format($discount, 0, ',', '.') }} đ</h3>
-                        <h3 class="total">Tổng: <span id="total">{{ number_format($total, 0, ',', '.') }} đ</span></h3>
-
+                    
+                        <h3>Tạm tính: <span id="subtotal">40.000 đ</span></h3>
+                        <h3>Giảm giá: 0 đ</h3>
+                        <h3 class="total">Tổng: <span id="total">40.000 đ</span></h3>
+                    
                         <div class="text-end mt-4">
-                            <a class="nav-link text-white load-content" href="#" data-url="{{ route('order.index') }}">
-                                <button class="btn btn-success">Thanh toán</button>
-                            </a>
+                            <div class="row justify-content-end">
+                                <!-- First Form: VNPAY Payment -->
+                                <div class="col-auto">
+                                    <form action="http://127.0.0.1:8000/vnpay_payment" method="POST">
+                                        @csrf
 
+                                        <input type="hidden" name="order_id" value="{{Str::random(16)}}">
+                                        <input type="hidden" name="order_type" value="vnpay">
+                                        <input type="hidden" name="total_amount" value="40000">
+                                        <button type="submit" class="btn btn-success">Thanh toán VNPAY</button>
+                                    </form>
+                                </div>
+                    
+                                <!-- Button to Show SHIPCOD Form -->
+                                <div class="col-auto">
+                                    <button type="button" class="btn btn-success ship-cod">Thanh toán SHIPCOD</button>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Hidden Form for SHIPCOD -->
+                        <div id="shipcod-form" class="mt-3" style="display: none;">
+                            <form action="{{route('payment.shipCode')}}" method="POST">
+                                <input type="hidden" name="_token" value="aaUFoAQfQMyOpSRZ7cDn9LFf4X0eqRXjO1olpqaE">
+                                <div class="mb-3">
+                                    <label for="receiver_name" class="form-label fs-6 fw-bold">Tên người nhận</label>
+                                    <input type="text" class="form-control" id="receiver_name" name="receiver_name" placeholder="Nhập tên người nhận" required="">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="receiver_phone" class="form-label fs-6 fw-bold">Điện thoại</label>
+                                    <input type="text" class="form-control" id="receiver_phone" name="receiver_phone" placeholder="Số điện thoại người nhận" required="">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="receiver_address" class="form-label fs-6 fw-bold">Địa chỉ</label>
+                                    <textarea class="form-control" id="receiver_address" name="receiver_address" rows="3" placeholder="Địa chỉ nhận" required=""></textarea>
+                                </div>
+                                <button type="button" class="btn btn-success btn-shipcod-submit">Submit</button>
+                            </form>
                         </div>
                     </div>
+                    
                 </div>
             @else
                 <p>Giỏ hàng của bạn đang trống.</p>
@@ -307,72 +337,7 @@
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function() {
-        $(".remove-btn").click(function() {
-            console.log("sẳn sàng");
-            var itemId = $(this).data("item-id");
-            console.log("ID sản phẩm cần xóa: " + itemId);
-            if (!itemId) {
-                console.error("Không tìm thấy ID sản phẩm!");
-                return;
-            }
-            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng?")) {
-                $.ajax({
-                    url: '/cart/remove/' + itemId,
-                    method: 'POST',
-                    data: {
-                        _token: "{{ csrf_token() }}"
-                    },
-                    beforeSend: function() {
-                        console.log("Đang gửi yêu cầu AJAX đến: /cart/remove/" + itemId);
-                    },
-                    success: function(response) {
-                        console.log("Response từ server: ", response);
-                        $("#cart-item-" + itemId).remove();
-                        alert("Sản phẩm đã được xóa khỏi giỏ hàng!");
-                        updateCartSummary(response.cart);
-                    },
-                    error: function(xhr, status, error) {
-                        console.error("Có lỗi xảy ra: ", error);
-                        alert("Có lỗi xảy ra. Vui lòng thử lại.");
-                    }
-                });
-            } else {
-                console.log("Hủy xóa sản phẩm");
-            }
-        });
-    });
-    function updateCartSummary(cart) {
-        $(".cart-summary .cart-item-count").text(cart.cartItems.length);
-        $(".cart-summary .cart-total").text(cart.totalAmount);
-    }
+@include('maincontent.payment-success')
 
-    // Hàm tăng/giảm số lượng sản phẩm
-    function changeQuantity(itemId, action) {
-        console.log('Thao tác ' + action + ' số lượng cho sản phẩm có ID: ' + itemId);
 
-        // Tăng hoặc giảm số lượng sản phẩm
-        $.ajax({
-            url: '/cart/quantity/' + itemId,
-            method: 'POST',
-            data: {
-                _token: "{{ csrf_token() }}",
-                action: action // Truyền thông tin hành động 'increase' hoặc 'decrease'
-            },
-            success: function(response) {
-                console.log("Cập nhật số lượng thành công:", response);
-                // Cập nhật lại thông tin giỏ hàng
-                updateCartSummary(response.cart);
-                // Cập nhật số lượng hiển thị trên giao diện
-                $("#cart-item-" + itemId + " .quantity-controls span").text(response.cartItem.quantity);
-            },
-            error: function(xhr, status, error) {
-                console.error("Có lỗi xảy ra khi thay đổi số lượng: ", error);
-            }
-        });
-    }
-</script>
 
-</body>
-</html>
