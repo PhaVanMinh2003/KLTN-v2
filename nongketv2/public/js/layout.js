@@ -44,4 +44,19 @@ window.onpopstate = function() {
     });
 };
 
+$(document).ready(function () {
+
+    if (window.location.href.includes("vnp_Amount")) {
+        // Show the Bootstrap modal
+        let transactionModal = new bootstrap.Modal(document.getElementById('transactionSuccessModal'));
+        transactionModal.show();
+
+        // Handle the OK button click to redirect to the homepage
+        $('#redirectHome').on('click', function () {
+            window.location.href = "/";
+        });
+    }
+
+});
+
 

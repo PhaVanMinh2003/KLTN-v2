@@ -71,6 +71,7 @@
     @include('maincontent.promotions')
     @include('maincontent.news')
     @include('maincontent.more-info')
+    @include('maincontent.payment-success')
 </main>
 
 <style>
