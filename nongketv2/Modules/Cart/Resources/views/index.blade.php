@@ -283,16 +283,16 @@
                                 <button type="submit" class="btn btn-primary mt-2">Áp dụng</button>
                             </div>
                         </form>
-                    
+
                         <h3>Tạm tính: <span id="subtotal">40.000 đ</span></h3>
                         <h3>Giảm giá: 0 đ</h3>
                         <h3 class="total">Tổng: <span id="total">40.000 đ</span></h3>
-                    
+
                         <div class="text-end mt-4">
                             <div class="row justify-content-end">
                                 <!-- First Form: VNPAY Payment -->
                                 <div class="col-auto">
-                                    <form action="http://127.0.0.1:8000/vnpay_payment" method="POST">
+                                    <form action="{{route('payment.vnpay')}}" method="POST">
                                         @csrf
 
                                         <input type="hidden" name="order_id" value="{{Str::random(16)}}">
@@ -301,14 +301,14 @@
                                         <button type="submit" class="btn btn-success">Thanh toán VNPAY</button>
                                     </form>
                                 </div>
-                    
+
                                 <!-- Button to Show SHIPCOD Form -->
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-success ship-cod">Thanh toán SHIPCOD</button>
                                 </div>
                             </div>
                         </div>
-                    
+
                         <!-- Hidden Form for SHIPCOD -->
                         <div id="shipcod-form" class="mt-3" style="display: none;">
                             <form action="{{route('payment.shipCode')}}" method="POST">
@@ -329,7 +329,7 @@
                             </form>
                         </div>
                     </div>
-                    
+
                 </div>
             @else
                 <p>Giỏ hàng của bạn đang trống.</p>

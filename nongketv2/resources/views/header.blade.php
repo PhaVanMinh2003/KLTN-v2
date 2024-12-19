@@ -31,18 +31,19 @@
                         <option value="en">🇺🇸 English</option>
                     </select>
                 </div>
-
-                <!-- User Info -->
-                @auth
+               <!-- User Info -->
                 <div class="d-inline-flex align-items-center">
+                    @auth
+                    <!-- Hiển thị avatar và tên khi đã đăng nhập -->
                     <img src="{{ auth()->user()->img ?? url('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle me-2" style="height: 40px; width: 40px; border: 2px solid white;">
                     <span class="text-white me-3">{{ Auth::user()->name }}</span>
                     <button class="btn btn-sm btn-outline-light rounded-pill" id="logout-btn">Đăng Xuất</button>
+                    @else
+                    <!-- Hiển thị avatar mặc định khi chưa đăng nhập -->
+                    <i class="fas fa-user-circle fa-2x text-white me-2"></i>
+                    <span class="text-white me-3">Khách</span>
+                    @endauth
                 </div>
-                @else
-                <a href="#" class="btn btn-sm btn-outline-light rounded-pill me-2 load-content" data-url="{{ route('user.login.form') }}">Đăng Nhập</a>
-                <a href="#" class="btn btn-sm btn-warning rounded-pill load-content" data-url="{{ route('user.register.form') }}">Đăng Ký</a>
-                @endauth
             </div>
         </div>
 
@@ -178,8 +179,7 @@ function loadContent(url) {
 }
 
 </script>
-<style>
-#login-register-links {
+<style>#login-register-links {
     display: flex;
     align-items: center; /* Căn chỉnh theo chiều dọc */
     gap: 15px; /* Khoảng cách giữa các nút */

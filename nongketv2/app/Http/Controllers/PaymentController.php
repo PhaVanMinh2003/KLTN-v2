@@ -10,10 +10,10 @@ class PaymentController extends Controller
     public function payment(Request $request)
     {
         $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = "http://127.0.0.1:8000/";
-        // $vnp_TmnCode = "82AOW7I2";//Mã website tại VNPAY 
+        $vnp_Returnurl = url('/');
+        // $vnp_TmnCode = "82AOW7I2";//Mã website tại VNPAY
         // $vnp_HashSecret = "YJYSL64B84JXHB8S4B8VPDYFATPXBS4O"; //Chuỗi bí mật
-        $vnp_TmnCode = env('VNPAY_CODE'); //Mã website tại VNPAY 
+        $vnp_TmnCode = env('VNPAY_CODE'); //Mã website tại VNPAY
         $vnp_HashSecret = env('VNPAY_SECRET'); //Chuỗi bí mật
 
         $vnp_TxnRef = $_POST['order_id'] ?? '';
@@ -42,14 +42,14 @@ class PaymentController extends Controller
             "vnp_TxnRef" => $vnp_TxnRef,
 
         );
-        
+
         if (isset($vnp_BankCode) && $vnp_BankCode != "") {
             $inputData['vnp_BankCode'] = $vnp_BankCode;
         }
         if (isset($vnp_Bill_State) && $vnp_Bill_State != "") {
             $inputData['vnp_Bill_State'] = $vnp_Bill_State;
         }
-        
+
         //var_dump($inputData);
         ksort($inputData);
         $query = "";
@@ -64,10 +64,10 @@ class PaymentController extends Controller
             }
             $query .= urlencode($key) . "=" . urlencode($value) . '&';
         }
-        
+
         $vnp_Url = $vnp_Url . "?" . $query;
         if (isset($vnp_HashSecret)) {
-            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//  
+            $vnpSecureHash =   hash_hmac('sha512', $hashdata, $vnp_HashSecret);//
             $vnp_Url .= 'vnp_SecureHash=' . $vnpSecureHash;
         }
         $returnData = array('code' => '00'
@@ -88,6 +88,6 @@ class PaymentController extends Controller
     public function shipCode()
     {
         $user_id = auth()->user()->id;
-        
+
     }
-}   
+}
