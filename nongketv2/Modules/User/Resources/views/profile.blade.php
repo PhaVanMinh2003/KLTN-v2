@@ -46,6 +46,89 @@
         </div>
     </div>
 
+            <!-- Lịch Sử Mua Hàng -->
+            <div class="card shadow-sm rounded-lg mb-4" style="background-color: #F9F9F9; border: none;">
+                <div class="card-body">
+                    <h4 class="text-dark mb-3" style="font-size: 22px; font-weight: 600;">Lịch Sử Mua Hàng</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã Đơn Hàng</th>
+                                    <th>Ngày Mua</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Chi Tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#1001</td>
+                                    <td>15/12/2024</td>
+                                    <td><span class="badge bg-success">Hoàn Thành</span></td>
+                                    <td>1,500,000 đ</td>
+                                    <td><button class="btn btn-sm btn-primary">Xem Chi Tiết</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#1002</td>
+                                    <td>10/12/2024</td>
+                                    <td><span class="badge bg-warning">Đang Giao</span></td>
+                                    <td>850,000 đ</td>
+                                    <td><button class="btn btn-sm btn-primary">Xem Chi Tiết</button></td>
+                                </tr>
+                                <tr>
+                                    <td>#1003</td>
+                                    <td>05/12/2024</td>
+                                    <td><span class="badge bg-danger">Hủy</span></td>
+                                    <td>0 đ</td>
+                                    <td><button class="btn btn-sm btn-primary">Xem Chi Tiết</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wishlist -->
+            <div class="card shadow-sm rounded-lg" style="background-color: #F9F9F9; border: none;">
+                <div class="card-body">
+                    <h4 class="text-dark mb-3" style="font-size: 22px; font-weight: 600;">Danh Sách Yêu Thích</h4>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="product-1.jpg" class="card-img-top" alt="Sản phẩm 1">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Sản phẩm 1</h5>
+                                    <p class="text-muted">500,000 đ</p>
+                                    <button class="btn btn-sm btn-primary">Xem Chi Tiết</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="product-2.jpg" class="card-img-top" alt="Sản phẩm 2">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Sản phẩm 2</h5>
+                                    <p class="text-muted">750,000 đ</p>
+                                    <button class="btn btn-sm btn-primary">Xem Chi Tiết</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <img src="product-3.jpg" class="card-img-top" alt="Sản phẩm 3">
+                                <div class="card-body text-center">
+                                    <h5 class="card-title">Sản phẩm 3</h5>
+                                    <p class="text-muted">1,200,000 đ</p>
+                                    <button class="btn btn-sm btn-primary">Xem Chi Tiết</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Thêm các thành phần phía dưới để tránh trống -->
     <footer class="mt-5 text-center">
         <p class="text-muted" style="font-size: 14px;">© 2024 Website của chúng tôi. Tất cả quyền được bảo lưu.</p>

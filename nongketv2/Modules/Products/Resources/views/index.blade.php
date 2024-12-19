@@ -17,77 +17,98 @@
             <div class="row">
                 <!-- Form Section -->
                 <div class="col-md-7 p-4 rounded shadow-sm" style="background: linear-gradient(to bottom, #FDF5E6, #FAF3E0); border: 1px solid #D4A017;">
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
 
-                        <!-- Product Type -->
-                        <div class="mb-4">
-                            <label for="product_type_id" class="form-label">
-                                <i class="fas fa-leaf text-success"></i> <strong>Loại Nông Sản:</strong>
-                            </label>
-                            <select class="form-select border-0 shadow-sm" name="product_type_id" id="product_type_id" required>
-                                <option value="" disabled selected>Chọn loại</option>
-                                @foreach ($productTypes as $type)
-                                    <option value="{{ $type->product_type_id }}">{{ $type->type_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+    <!-- Farmer ID (ẩn hoặc chọn) -->
+    <input type="hidden" name="farmer_id" value="{{ $farmerId }}">
 
-                        <!-- Name -->
-                        <div class="mb-4">
-                            <label for="name" class="form-label">
-                                <i class="fas fa-seedling text-success"></i> <strong>Tên Nông Sản:</strong>
-                            </label>
-                            <input type="text" class="form-control border-0 shadow-sm" name="name" id="name" placeholder="Nhập tên sản phẩm" required>
-                        </div>
+    <!-- Product Type -->
+    <div class="mb-4">
+        <label for="product_type_id" class="form-label">
+            <i class="fas fa-leaf text-success"></i> <strong>Loại Nông Sản:</strong>
+        </label>
+        <select class="form-select border-0 shadow-sm" name="product_type_id" id="product_type_id" required>
+    <option value="" disabled selected>Chọn loại</option> <!-- Giữ giá trị này để người dùng chọn loại -->
+    @foreach ($productTypes as $type)
+        <option value="{{ $type->id }}">{{ $type->type_name }}</option> <!-- Đảm bảo giá trị là id đúng -->
+    @endforeach
+</select>
 
-                        <!-- Description -->
-                        <div class="mb-4">
-                            <label for="description" class="form-label">
-                                <i class="fas fa-align-left text-success"></i> <strong>Mô Tả:</strong>
-                            </label>
-                            <textarea class="form-control border-0 shadow-sm" name="description" id="description" rows="3" placeholder="Nhập mô tả"></textarea>
-                        </div>
+    </div>
 
-                        <!-- Origin -->
-                        <div class="mb-4">
-                            <label for="origin" class="form-label">
-                                <i class="fas fa-map-marker-alt text-success"></i> <strong>Xuất Xứ:</strong>
-                            </label>
-                            <input type="text" class="form-control border-0 shadow-sm" name="origin" id="origin" placeholder="Nhập xuất xứ">
-                        </div>
+    <!-- Name -->
+    <div class="mb-4">
+        <label for="name" class="form-label">
+            <i class="fas fa-seedling text-success"></i> <strong>Tên Nông Sản:</strong>
+        </label>
+        <input type="text" class="form-control border-0 shadow-sm" name="name" id="name" placeholder="Nhập tên sản phẩm" required>
+    </div>
 
-                        <!-- Quantity -->
-                        <div class="mb-4">
-                            <label for="quantity" class="form-label">
-                                <i class="fas fa-cubes text-success"></i> <strong>Số Lượng:</strong>
-                            </label>
-                            <input type="number" class="form-control border-0 shadow-sm" name="quantity" id="quantity" placeholder="Nhập số lượng" required>
-                        </div>
+    <!-- Description -->
+    <div class="mb-4">
+        <label for="description" class="form-label">
+            <i class="fas fa-align-left text-success"></i> <strong>Mô Tả:</strong>
+        </label>
+        <textarea class="form-control border-0 shadow-sm" name="description" id="description" rows="3" placeholder="Nhập mô tả"></textarea>
+    </div>
 
-                        <!-- Price -->
-                        <div class="mb-4">
-                            <label for="price" class="form-label">
-                                <i class="fas fa-money-bill-wave text-success"></i> <strong>Giá (VNĐ):</strong>
-                            </label>
-                            <input type="number" step="0.01" class="form-control border-0 shadow-sm" name="price" id="price" placeholder="Nhập giá" required>
-                        </div>
+    <!-- Origin -->
+    <div class="mb-4">
+        <label for="origin" class="form-label">
+            <i class="fas fa-map-marker-alt text-success"></i> <strong>Xuất Xứ:</strong>
+        </label>
+        <input type="text" class="form-control border-0 shadow-sm" name="origin" id="origin" placeholder="Nhập xuất xứ">
+    </div>
 
-                        <!-- Image Upload -->
-                        <div class="mb-4">
-                            <label for="image" class="form-label">
-                                <i class="fas fa-camera text-success"></i> <strong>Hình Ảnh:</strong>
-                            </label>
-                            <input type="file" class="form-control border-0 shadow-sm" name="image" id="image" accept="image/*" onchange="previewImage(event)">
-                        </div>
+    <!-- History -->
+    <div class="mb-4">
+        <label for="history" class="form-label">
+            <i class="fas fa-history text-success"></i> <strong>Lịch Sử:</strong>
+        </label>
+        <textarea class="form-control border-0 shadow-sm" name="history" id="history" rows="3" placeholder="Nhập lịch sử"></textarea>
+    </div>
 
-                        <!-- Submit Button -->
-                        <div class="text-center">
-                            <button type="submit" class="btn text-white" style="background-color: #4CAF50; padding: 10px 40px;">
-                                <i class="fas fa-paper-plane"></i> Đăng Bài
-                            </button>
-                        </div>
-                    </form>
+    <!-- Rating -->
+    <div class="mb-4">
+        <label for="rating" class="form-label">
+            <i class="fas fa-star text-success"></i> <strong>Đánh Giá:</strong>
+        </label>
+        <input type="number" step="0.1" class="form-control border-0 shadow-sm" name="rating" id="rating" min="0" max="5" placeholder="Nhập đánh giá (0-5)">
+    </div>
+
+    <!-- Quantity -->
+    <div class="mb-4">
+        <label for="quantity" class="form-label">
+            <i class="fas fa-cubes text-success"></i> <strong>Số Lượng:</strong>
+        </label>
+        <input type="number" class="form-control border-0 shadow-sm" name="quantity" id="quantity" placeholder="Nhập số lượng" required>
+    </div>
+
+    <!-- Price -->
+    <div class="mb-4">
+        <label for="price" class="form-label">
+            <i class="fas fa-money-bill-wave text-success"></i> <strong>Giá (VNĐ):</strong>
+        </label>
+        <input type="number" step="0.01" class="form-control border-0 shadow-sm" name="price" id="price" placeholder="Nhập giá" required>
+    </div>
+
+    <!-- Image Upload -->
+    <div class="mb-4">
+        <label for="image" class="form-label">
+            <i class="fas fa-camera text-success"></i> <strong>Hình Ảnh:</strong>
+        </label>
+        <input type="file" class="form-control border-0 shadow-sm" name="image" id="image" accept="image/*">
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+        <button type="submit" class="btn text-white" style="background-color: #4CAF50; padding: 10px 40px;">
+            <i class="fas fa-paper-plane"></i> Đăng Bài
+        </button>
+    </div>
+</form>
+
                 </div>
                 <!-- Phần Preview -->
                 <div class="col-md-5">

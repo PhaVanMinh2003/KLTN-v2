@@ -5,32 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Farmer extends Model
-{
-    use HasFactory;
-
-    protected $table = 'farmers';
-
-    protected $fillable = [
-        'name',
-        'email',
-        'phone',
-        'address',
-        'created_at',
-        'updated_at',
-    ];
-
-    public function products()
+    class Farmer extends Model
     {
-        return $this->hasMany(Product::class);
-    }
+        use HasFactory;
 
-    /**
-     * Relationship: Farmer can have many Users (linked as farmers).
-     */
-    public function users()
-    {
-        return $this->hasMany(User::class, 'farmer_id');
+        protected $table = 'farmers';
+
+        protected $fillable = [
+            'name',
+            'email',
+            'phone',
+            'address',
+            'created_at',
+            'updated_at',
+        ];
+
+        public function products()
+        {
+            return $this->hasMany(Product::class);
+        }
+
+        /**
+         * Relationship: Farmer can have many Users (linked as farmers).
+         */
+        public function users()
+        {
+            return $this->hasMany(User::class, 'farmer_id');
+        }
     }
-}
 
